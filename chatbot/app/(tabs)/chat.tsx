@@ -229,48 +229,6 @@ export default function Index() {
                   </TouchableOpacity>
                 </View>
               </View>
-
-              {/* Faux tab bar */}
-              <View className="border-t border-gray-100 px-6 pt-3 pb-6">
-                <View className="flex-row justify-between">
-                  <View className="items-center">
-                    <Ionicons name="home-outline" size={22} color="#6B7280" />
-                    <Text className="text-[12px] text-gray-500 mt-1">Home</Text>
-                  </View>
-
-                  <View className="items-center">
-                    <Ionicons name="chatbubble" size={22} color="#4CAF7A" />
-                    <Text className="text-[12px] text-[#4CAF7A] mt-1">
-                      AI Chat
-                    </Text>
-                  </View>
-
-                  <View className="items-center">
-                    <Ionicons name="book-outline" size={22} color="#6B7280" />
-                    <Text className="text-[12px] text-gray-500 mt-1">
-                      Learn
-                    </Text>
-                  </View>
-
-                  <View className="items-center">
-                    <Ionicons name="person-outline" size={22} color="#6B7280" />
-                    <Text className="text-[12px] text-gray-500 mt-1">
-                      Profile
-                    </Text>
-                  </View>
-
-                  <View className="items-center">
-                    <Ionicons
-                      name="settings-outline"
-                      size={22}
-                      color="#6B7280"
-                    />
-                    <Text className="text-[12px] text-gray-500 mt-1">
-                      Settings
-                    </Text>
-                  </View>
-                </View>
-              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
