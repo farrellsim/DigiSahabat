@@ -9,9 +9,10 @@ import {
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { clearSession, getSession, setSession } from "../../lib/protoSession";
+import { setLanguage, getLanguage } from "@/src/services/db";
 
-export default function Settings() {
-  const [language, setLanguage] = useState<"English" | "Malay">("English");
+export default function Settings() { 
+  const language = getLanguage();
   const [textSize, setTextSize] = useState<"Small" | "Medium" | "Large">(
     "Medium"
   );
@@ -21,7 +22,7 @@ export default function Settings() {
   useEffect(() => {
     (async () => {
       const s = await getSession();
-      setLanguage(s.language ?? "English");
+      setLanguage(s.language ?? "en");
       setTextSize(s.textSize ?? "Medium");
       setNotifications(!!s.notifications);
       setVoice(!!s.voice);
@@ -41,7 +42,7 @@ export default function Settings() {
   };
 
   const changeLang = async () => {
-    const next = language === "English" ? "Malay" : "English";
+    const next = language === "en" ? "ms" : "en";
     setLanguage(next);
     await setSession({ language: next });
   };

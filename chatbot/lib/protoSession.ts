@@ -6,7 +6,7 @@ export type ProtoSession = {
   isAuthed: boolean;
   username?: string;
   phone?: string;
-  language?: "English" | "Malay";
+  language?: "en" | "ms";
   textSize?: "Small" | "Medium" | "Large";
   notifications?: boolean;
   voice?: boolean;
@@ -14,7 +14,7 @@ export type ProtoSession = {
 
 const DEFAULTS: ProtoSession = {
   isAuthed: false,
-  language: "English",
+  language: "en",
   textSize: "Medium",
   notifications: true,
   voice: false,

@@ -15,11 +15,11 @@ if (!process.env.GEMINI_API_KEY) {
   console.warn("⚠️ GEMINI_API_KEY is missing. Put it in server/.env");
 }
 
-// ✅ Gemini OpenAI-compatible endpoint
-const client = new OpenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
-});
+// ✅ Gemini OpenAI-compatible endpoint TEMPCHANGE
+// const client = new OpenAI({
+//   apiKey: process.env.GEMINI_API_KEY,
+//   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+// });
 
 // Health check
 app.get("/health", (_req, res) => res.json({ ok: true }));
