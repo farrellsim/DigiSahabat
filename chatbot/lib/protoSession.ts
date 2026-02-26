@@ -6,7 +6,7 @@ export type ProtoSession = {
   isAuthed: boolean;
   username?: string;
   phone?: string;
-  language?: "en" | "ms";
+  language?: "en" | "ms" | "zh";
   textSize?: "Small" | "Medium" | "Large";
   notifications?: boolean;
   voice?: boolean;

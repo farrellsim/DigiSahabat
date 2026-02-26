@@ -33,7 +33,8 @@ interface Progress {
 }
 
 // Language type
-type Language = 'en' | 'ms' | 'zh' | 'ta';
+type Language = 'en' | 'ms' | 'zh'
+;
 
 // In-memory data storage
 let modules: Module[] = [];

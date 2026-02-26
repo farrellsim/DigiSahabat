@@ -12,7 +12,7 @@ import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 // Import your database services (adjust path if needed)
-import { initDB, getModules, getModulesByCategory, t } from "../../src/services/db";
+import { initDB, getModules, getModulesByCategory, t, getLanguage } from "../../src/services/db";
 
 const CATEGORIES = [
   { id: "all", label: "All", icon: "apps" },
@@ -28,18 +28,32 @@ export default function Learn() {
   const [filteredModules, setFilteredModules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [currentLanguage, setCurrentLanguage] = useState(getLanguage());
 
   // Load data every time screen comes into focus
   useFocusEffect(
     useCallback(() => {
       const loadData = async () => {
+        setLoading(true);
         try {
+          // Get the current language to detect changes
+          const lang = getLanguage();
+          setCurrentLanguage(lang);
+          
           // Initialize DB (creates tables/seeds data if new)
           initDB();
+          
           // Fetch modules joined with progress
           const data = getModules();
           setModules(data);
-          setFilteredModules(data);
+          
+          // Apply current category filter
+          if (selectedCategory === "all") {
+            setFilteredModules(data);
+          } else {
+            const filtered = getModulesByCategory(selectedCategory);
+            setFilteredModules(filtered);
+          }
         } catch (e) {
           console.error("Failed to load modules:", e);
         } finally {
@@ -48,7 +62,7 @@ export default function Learn() {
       };
 
       loadData();
-    }, [])
+    }, []) // Re-run when screen comes into focus
   );
 
   const handleCategoryChange = (categoryId: string) => {
@@ -117,13 +131,14 @@ export default function Learn() {
               {t('ui.learningPath')}
             </Text>
             
-            {/* Language Settings Button */}
-            <TouchableOpacity
-              onPress={() => router.push('../screens/language-settings')}
-              className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center"
-            >
-              <Ionicons name="language" size={22} color="#374151" />
-            </TouchableOpacity>
+            {/* Language Indicator */}
+            <View className="flex-row items-center gap-2">
+              <View className="px-3 py-1.5 rounded-full bg-green-100 border border-green-200">
+                <Text className="text-[12px] font-semibold text-green-700">
+                  {currentLanguage.toUpperCase()}
+                </Text>
+              </View>
+            </View>
           </View>
           
           <Text className="text-[15px] text-gray-600 mt-1">

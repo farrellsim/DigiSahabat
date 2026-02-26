@@ -31,12 +31,12 @@ const LANGUAGES = [
     nativeName: '中文',
     flag: '🇨🇳',
   },
-  {
-    code: 'ta',
-    name: 'Tamil',
-    nativeName: 'தமிழ்',
-    flag: '🇮🇳',
-  },
+  // {
+  //   code: 'ta',
+  //   name: 'Tamil',
+  //   nativeName: 'தமிழ்',
+  //   flag: '🇮🇳',
+  // },
 ];
 
 export default function LanguageSettings() {
