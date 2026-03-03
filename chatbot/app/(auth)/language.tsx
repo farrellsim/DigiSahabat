@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { router } from "expo-router";
 import { setSession } from "../../lib/protoSession";
+import { refreshTranslations, setLanguage } from "../../src/services/db";
 
 function LangCard({
   title,
@@ -35,11 +36,13 @@ function LangCard({
 }
 
 export default function Language() {
-  const [lang, setLang] = useState<"English" | "Malay">("English");
+  const [lang, setLang] = useState<"en" | "ms">("en");
 
   const next = async () => {
     await setSession({ language: lang });
-    router.push("/(auth)/signup");
+    setLanguage(lang);
+    refreshTranslations();
+    router.push("/(auth)/literacy-assessment"); // Changed from signup
   };
 
   return (
@@ -50,7 +53,7 @@ export default function Language() {
         </View>
 
         <Text className="text-[26px] font-semibold text-gray-900">
-          Choose Your{"\n"}Language
+          Choose Your Language / {"\n"}Pilih Bahasa Anda
         </Text>
         <Text className="text-[13px] text-gray-500 mt-2 mb-6">
           Select your preferred language
@@ -59,19 +62,22 @@ export default function Language() {
         <LangCard
           title="English"
           subtitle="Primary language"
-          selected={lang === "English"}
-          onPress={() => setLang("English")}
+          selected={lang === "en"}
+          onPress={() => setLang("en")}
         />
 
         <LangCard
           title="Malay"
           subtitle="Bahasa Melayu"
-          selected={lang === "Malay"}
-          onPress={() => setLang("Malay")}
+          selected={lang === "ms"}
+          onPress={() => setLang("ms")}
         />
 
         <TouchableOpacity
-          onPress={next}
+          onPress={() => {
+            refreshTranslations();
+            next();
+          }}
           className="mt-2 rounded-2xl bg-green-600 py-4 items-center"
         >
           <Text className="text-white text-[15px] font-semibold">Continue</Text>

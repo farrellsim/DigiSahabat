@@ -12,7 +12,13 @@ import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 // Import your database services (adjust path if needed)
-import { initDB, getModules, getModulesByCategory, t, getLanguage } from "../../src/services/db";
+import {
+  initDB,
+  getModules,
+  getModulesByCategory,
+  t,
+  getLanguage,
+} from "../../src/services/db";
 
 const CATEGORIES = [
   { id: "all", label: "All", icon: "apps" },
@@ -39,14 +45,14 @@ export default function Learn() {
           // Get the current language to detect changes
           const lang = getLanguage();
           setCurrentLanguage(lang);
-          
+
           // Initialize DB (creates tables/seeds data if new)
           initDB();
-          
+
           // Fetch modules joined with progress
           const data = getModules();
           setModules(data);
-          
+
           // Apply current category filter
           if (selectedCategory === "all") {
             setFilteredModules(data);
@@ -62,12 +68,12 @@ export default function Learn() {
       };
 
       loadData();
-    }, []) // Re-run when screen comes into focus
+    }, []), // Re-run when screen comes into focus
   );
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    
+
     if (categoryId === "all") {
       setFilteredModules(modules);
     } else {
@@ -78,9 +84,17 @@ export default function Learn() {
 
   const getStatusColor = (status: string) => {
     // Handle multiple language statuses
-    const isCompleted = status === "Completed" || status === "Selesai" || status === "已完成" || status === "முடிந்தது";
-    const isInProgress = status === "In Progress" || status === "Dalam Kemajuan" || status === "进行中" || status === "முன்னேற்றத்தில்";
-    
+    const isCompleted =
+      status === "Completed" ||
+      status === "Selesai" ||
+      status === "已完成" ||
+      status === "முடிந்தது";
+    const isInProgress =
+      status === "In Progress" ||
+      status === "Dalam Kemajuan" ||
+      status === "进行中" ||
+      status === "முன்னேற்றத்தில்";
+
     if (isCompleted) {
       return {
         bg: "bg-green-50",
@@ -109,12 +123,20 @@ export default function Learn() {
   };
 
   const getButtonText = (status: string) => {
-    const isCompleted = status === "Completed" || status === "Selesai" || status === "已完成" || status === "முடிந்தது";
-    const isInProgress = status === "In Progress" || status === "Dalam Kemajuan" || status === "进行中" || status === "முன்னேற்றத்தில்";
-    
-    if (isCompleted) return t('ui.reviewModule');
-    if (isInProgress) return t('ui.continueLearning');
-    return t('ui.startLearning');
+    const isCompleted =
+      status === "Completed" ||
+      status === "Selesai" ||
+      status === "已完成" ||
+      status === "முடிந்தது";
+    const isInProgress =
+      status === "In Progress" ||
+      status === "Dalam Kemajuan" ||
+      status === "进行中" ||
+      status === "முன்னேற்றத்தில்";
+
+    if (isCompleted) return t("ui.reviewModule");
+    if (isInProgress) return t("ui.continueLearning");
+    return t("ui.startLearning");
   };
 
   return (
@@ -128,9 +150,9 @@ export default function Learn() {
         <View className="px-6 pt-6 pb-4 bg-white">
           <View className="flex-row items-center justify-between mb-2">
             <Text className="text-[28px] font-bold text-gray-900">
-              {t('ui.learningPath')}
+              {t("ui.learningPath")}
             </Text>
-            
+
             {/* Language Indicator */}
             <View className="flex-row items-center gap-2">
               <View className="px-3 py-1.5 rounded-full bg-green-100 border border-green-200">
@@ -140,9 +162,9 @@ export default function Learn() {
               </View>
             </View>
           </View>
-          
+
           <Text className="text-[15px] text-gray-600 mt-1">
-            {t('ui.masterDigital')}
+            {t("ui.masterDigital")}
           </Text>
         </View>
 
@@ -153,13 +175,20 @@ export default function Learn() {
               <View className="flex-row items-center justify-between">
                 <View>
                   <Text className="text-[24px] font-bold text-green-700">
-                    {modules.filter((m) => {
-                      const status = m.status || "";
-                      return status === "Completed" || status === "Selesai" || status === "已完成" || status === "முடிந்தது";
-                    }).length}
+                    {
+                      modules.filter((m) => {
+                        const status = m.status || "";
+                        return (
+                          status === "Completed" ||
+                          status === "Selesai" ||
+                          status === "已完成" ||
+                          status === "முடிந்தது"
+                        );
+                      }).length
+                    }
                   </Text>
                   <Text className="text-[12px] text-green-600 mt-1">
-                    {t('ui.completed')}
+                    {t("ui.completed")}
                   </Text>
                 </View>
                 <Ionicons name="trophy" size={32} color="#16a34a" />
@@ -170,31 +199,52 @@ export default function Learn() {
               <View className="flex-row items-center justify-between">
                 <View>
                   <Text className="text-[24px] font-bold text-blue-700">
-                    {modules.filter((m) => {
-                      const status = m.status || "";
-                      return status === "In Progress" || status === "Dalam Kemajuan" || status === "进行中" || status === "முன்னேற்றத்தில்";
-                    }).length}
+                    {
+                      modules.filter((m) => {
+                        const status = m.status || "";
+                        return (
+                          status === "In Progress" ||
+                          status === "Dalam Kemajuan" ||
+                          status === "进行中" ||
+                          status === "முன்னேற்றத்தில்"
+                        );
+                      }).length
+                    }
                   </Text>
                   <Text className="text-[12px] text-blue-600 mt-1">
-                    {t('ui.inProgress')}
+                    {t("ui.inProgress")}
                   </Text>
                 </View>
                 <Ionicons name="play-circle" size={32} color="#2563eb" />
               </View>
             </View>
           </View>
+          <View></View>
+        </View>
+
+        {/* P2P Share */}
+        <View className="px-6 bg-white mb-2">
+          <TouchableOpacity
+            onPress={() => router.push("/screens/p2p-discovery")}
+            className="rounded-2xl bg-green-600 py-4 px-6 flex-row items-center justify-center"
+          >
+            <Ionicons name="share-social" size={20} color="white" />
+            <Text className="text-white text-[15px] font-bold ml-2">
+              Share Modules
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Category Filter */}
         <View className="px-6 py-3 bg-white mb-2">
-          <ScrollView 
-            horizontal 
+          <ScrollView
+            horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ gap: 8 }}
           >
             {CATEGORIES.map((category) => {
               const isSelected = selectedCategory === category.id;
-              
+
               return (
                 <TouchableOpacity
                   key={category.id}
@@ -229,7 +279,7 @@ export default function Learn() {
             <View className="mt-10 items-center">
               <ActivityIndicator size="large" color="#16a34a" />
               <Text className="text-gray-400 mt-3 text-[14px]">
-                {t('ui.loadingModules')}
+                {t("ui.loadingModules")}
               </Text>
             </View>
           ) : (
@@ -264,8 +314,10 @@ export default function Learn() {
                               size={14}
                               color={statusStyle.iconColor}
                             />
-                            <Text className={`text-[11px] font-semibold ml-1.5 ${statusStyle.text}`}>
-                              {m.status || t('ui.notStarted')}
+                            <Text
+                              className={`text-[11px] font-semibold ml-1.5 ${statusStyle.text}`}
+                            >
+                              {m.status || t("ui.notStarted")}
                             </Text>
                           </View>
                         </View>
@@ -287,14 +339,18 @@ export default function Learn() {
                               <Ionicons name="time" size={16} color="#16a34a" />
                             </View>
                             <Text className="text-[13px] text-gray-700 ml-2 font-medium">
-                              {m.mins} {t('ui.minutes')}
+                              {m.mins} {t("ui.minutes")}
                             </Text>
                           </View>
 
                           <View className="flex-row items-center">
-                            <Ionicons name="book-outline" size={16} color="#6B7280" />
+                            <Ionicons
+                              name="book-outline"
+                              size={16}
+                              color="#6B7280"
+                            />
                             <Text className="text-[13px] text-gray-500 ml-1.5">
-                              {t('ui.interactive')}
+                              {t("ui.interactive")}
                             </Text>
                           </View>
                         </View>
@@ -334,13 +390,17 @@ export default function Learn() {
           {!loading && filteredModules.length === 0 && (
             <View className="items-center mt-20">
               <View className="w-20 h-20 rounded-full bg-gray-100 items-center justify-center mb-4">
-                <Ionicons name="folder-open-outline" size={40} color="#9CA3AF" />
+                <Ionicons
+                  name="folder-open-outline"
+                  size={40}
+                  color="#9CA3AF"
+                />
               </View>
               <Text className="text-center text-gray-500 text-[16px] font-medium">
-                {t('ui.noModules')}
+                {t("ui.noModules")}
               </Text>
               <Text className="text-center text-gray-400 text-[14px] mt-2">
-                {t('ui.checkBack')}
+                {t("ui.checkBack")}
               </Text>
             </View>
           )}

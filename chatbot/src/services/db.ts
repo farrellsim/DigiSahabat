@@ -33,18 +33,139 @@ interface Progress {
 }
 
 // Language type
-type Language = 'en' | 'ms' | 'zh'
-;
+type Language = "en" | "ms" | "zh";
 
 // In-memory data storage
 let modules: Module[] = [];
 let lessons: Lesson[] = [];
 let progress: Progress[] = [];
-let currentLanguage: Language = 'en';
+let currentLanguage: Language = "en";
 
 // Translations
 const translations = {
   en: {
+    splash: {
+      title: "Let’s start with a digital literacy assessment",
+      subtitle: "👆 Tap anywhere to continue",
+    },
+    assessment: {
+      title: "Digital Literacy Assessment",
+      subtitle: "Help us understand your current skills",
+      skip: "Skip",
+      previous: "Previous",
+      next: "Next",
+      seeResults: "See Results",
+      questionOf: "Question {current} of {total}",
+
+      // Result screen
+      resultsTitle: "Assessment Results",
+      whatThisMeans: "What This Means",
+      whatThisMeansDesc:
+        "Based on your responses, we've identified your digital literacy level. This helps us recommend the most suitable learning modules for you!",
+      personalizedPath: "Personalized learning path",
+      rightLevel: "Start at the right difficulty level",
+      ownPace: "Progress at your own pace",
+      recommendedForYou: "Recommended For You",
+      modulesSelected: "We've selected {count} modules perfect for your level:",
+      continueSignup: "Continue to Sign Up",
+      retakeAssessment: "Retake Assessment",
+
+      // Levels
+      levels: {
+        novice: {
+          title: "New Learner",
+          description: "Great! We'll guide you step by step.",
+        },
+        beginner: {
+          title: "Beginner",
+          description: "Perfect! We'll start with the fundamentals.",
+        },
+        intermediate: {
+          title: "Intermediate",
+          description: "You have good basic skills. Ready to learn more!",
+        },
+        advanced: {
+          title: "Advanced",
+          description: "You have strong digital literacy skills!",
+        },
+      },
+
+      // Questions
+      questions: {
+        q1: {
+          question: "Have you used a smartphone before?",
+          options: [
+            "Yes, I use it daily",
+            "Yes, but not often",
+            "A few times",
+            "Never",
+          ],
+        },
+        q2: {
+          question: "Can you send and receive text messages?",
+          options: [
+            "Yes, easily",
+            "Yes, with some help",
+            "Rarely",
+            "No, I can't",
+          ],
+        },
+        q3: {
+          question: "Have you used email before?",
+          options: [
+            "Yes, I check it regularly",
+            "Yes, but I need help",
+            "I have an email but don't use it",
+            "No, never used email",
+          ],
+        },
+        q4: {
+          question: "Can you search for information on the internet?",
+          options: [
+            "Yes, I do it often",
+            "Yes, with some difficulty",
+            "Rarely, with help",
+            "No, I don't know how",
+          ],
+        },
+        q5: {
+          question: "Have you used WhatsApp or similar messaging apps?",
+          options: [
+            "Yes, I use it daily",
+            "Yes, occasionally",
+            "Tried once or twice",
+            "Never used it",
+          ],
+        },
+        q6: {
+          question: "Can you install apps on your phone?",
+          options: [
+            "Yes, easily",
+            "Yes, with help",
+            "Someone does it for me",
+            "No idea how",
+          ],
+        },
+        q7: {
+          question: "Have you made online purchases or payments?",
+          options: [
+            "Yes, many times",
+            "Yes, a few times",
+            "Once, with help",
+            "Never",
+          ],
+        },
+        q8: {
+          question: "Do you know how to stay safe online?",
+          options: [
+            "Yes, I'm careful about security",
+            "I know some safety tips",
+            "Not really sure",
+            "No knowledge",
+          ],
+        },
+      },
+    },
     modules: {
       gmail: {
         title: "Gmail Basics",
@@ -185,6 +306,7 @@ const translations = {
     },
     ui: {
       notStarted: "Not Started",
+      points: "points",
       inProgress: "In Progress",
       completed: "Completed",
       minutes: "minutes",
@@ -201,6 +323,132 @@ const translations = {
     },
   },
   ms: {
+    splash: {
+      title: "Mari kita mulakan dengan penilaian celik digital",
+      subtitle: "👆 Tekan untuk meneruskan",
+    },
+    assessment: {
+      title: "Penilaian Literasi Digital",
+      subtitle: "Bantu kami memahami kemahiran semasa anda",
+      skip: "Langkau",
+      previous: "Sebelum",
+      next: "Seterusnya",
+      seeResults: "Lihat Keputusan",
+      questionOf: "Soalan {current} daripada {total}",
+
+      // Result screen
+      resultsTitle: "Keputusan Penilaian",
+      whatThisMeans: "Maksudnya",
+      whatThisMeansDesc:
+        "Berdasarkan respons anda, kami telah mengenal pasti tahap literasi digital anda. Ini membantu kami mengesyorkan modul pembelajaran yang paling sesuai untuk anda!",
+      personalizedPath: "Laluan pembelajaran diperibadikan",
+      rightLevel: "Mula pada tahap kesukaran yang betul",
+      ownPace: "Maju mengikut kadar anda sendiri",
+      recommendedForYou: "Disyorkan Untuk Anda",
+      modulesSelected:
+        "Kami telah memilih {count} modul yang sempurna untuk tahap anda:",
+      continueSignup: "Teruskan ke Pendaftaran",
+      retakeAssessment: "Ambil Semula Penilaian",
+
+      // Levels
+      levels: {
+        novice: {
+          title: "Pelajar Baharu",
+          description: "Hebat! Kami akan membimbing anda langkah demi langkah.",
+        },
+        beginner: {
+          title: "Pemula",
+          description: "Sempurna! Kami akan mulakan dengan asas.",
+        },
+        intermediate: {
+          title: "Pertengahan",
+          description:
+            "Anda mempunyai kemahiran asas yang baik. Bersedia untuk belajar lebih banyak!",
+        },
+        advanced: {
+          title: "Mahir",
+          description: "Anda mempunyai kemahiran literasi digital yang kukuh!",
+        },
+      },
+
+      // Questions
+      questions: {
+        q1: {
+          question: "Pernahkah anda menggunakan telefon pintar sebelum ini?",
+          options: [
+            "Ya, saya gunakannya setiap hari",
+            "Ya, tetapi tidak kerap",
+            "Beberapa kali",
+            "Tidak pernah",
+          ],
+        },
+        q2: {
+          question: "Bolehkah anda menghantar dan menerima mesej teks?",
+          options: [
+            "Ya, dengan mudah",
+            "Ya, dengan sedikit bantuan",
+            "Jarang",
+            "Tidak, saya tidak boleh",
+          ],
+        },
+        q3: {
+          question: "Pernahkah anda menggunakan e-mel sebelum ini?",
+          options: [
+            "Ya, saya semak secara berkala",
+            "Ya, tetapi saya perlukan bantuan",
+            "Saya ada e-mel tetapi tidak guna",
+            "Tidak, tidak pernah guna e-mel",
+          ],
+        },
+        q4: {
+          question: "Bolehkah anda mencari maklumat di internet?",
+          options: [
+            "Ya, saya sering lakukan",
+            "Ya, dengan sedikit kesukaran",
+            "Jarang, dengan bantuan",
+            "Tidak, saya tidak tahu caranya",
+          ],
+        },
+        q5: {
+          question:
+            "Pernahkah anda menggunakan WhatsApp atau aplikasi pesanan serupa?",
+          options: [
+            "Ya, saya gunakannya setiap hari",
+            "Ya, kadang-kadang",
+            "Cuba sekali atau dua kali",
+            "Tidak pernah gunakannya",
+          ],
+        },
+        q6: {
+          question: "Bolehkah anda memasang aplikasi di telefon anda?",
+          options: [
+            "Ya, dengan mudah",
+            "Ya, dengan bantuan",
+            "Seseorang lakukan untuk saya",
+            "Tidak tahu caranya",
+          ],
+        },
+        q7: {
+          question:
+            "Pernahkah anda membuat pembelian atau pembayaran dalam talian?",
+          options: [
+            "Ya, banyak kali",
+            "Ya, beberapa kali",
+            "Sekali, dengan bantuan",
+            "Tidak pernah",
+          ],
+        },
+        q8: {
+          question: "Adakah anda tahu cara untuk kekal selamat dalam talian?",
+          options: [
+            "Ya, saya berhati-hati tentang keselamatan",
+            "Saya tahu beberapa petua keselamatan",
+            "Tidak pasti",
+            "Tiada pengetahuan",
+          ],
+        },
+      },
+    },
     modules: {
       gmail: {
         title: "Asas Gmail",
@@ -335,6 +583,7 @@ const translations = {
     },
     ui: {
       notStarted: "Belum Bermula",
+      points: "markah",
       inProgress: "Dalam Kemajuan",
       completed: "Selesai",
       minutes: "minit",
@@ -646,22 +895,38 @@ const translations = {
       noModules: "தொகுதிகள் இல்லை",
       checkBack: "புதிய உள்ளடக்கத்திற்கு விரைவில் சரிபார்க்கவும்",
       learningPath: "கற்றல் பாதை",
-      masterDigital: "ஒரு நேரத்தில் ஒரு படியாக டிஜிட்டல் எழுத்தறிவை தேர்ச்சி பெறுங்கள்",
+      masterDigital:
+        "ஒரு நேரத்தில் ஒரு படியாக டிஜிட்டல் எழுத்தறிவை தேர்ச்சி பெறுங்கள்",
       quiz: "வினாடி வினா",
     },
   },
 };
 
 // Get translation for current language
-const t = (key: string): string => {
-  const keys = key.split('.');
+const t = (key: string, params?: Record<string, any>): string => {
+  const keys = key.split(".");
   let value: any = translations[currentLanguage];
-  
+
   for (const k of keys) {
     value = value?.[k];
   }
-  
-  return value || key;
+
+  // Handle missing translations
+  if (!value) {
+    console.warn(
+      `Translation missing for key: ${key} in language: ${currentLanguage}`,
+    );
+    return key;
+  }
+
+  // Replace placeholders like {count}, {current}, {total}
+  if (params && typeof value === "string") {
+    Object.keys(params).forEach((paramKey) => {
+      value = value.replace(`{${paramKey}}`, params[paramKey]);
+    });
+  }
+
+  return value;
 };
 
 // Set language
@@ -681,61 +946,66 @@ export const initDB = () => {
   modules = [
     {
       id: 1,
-      title: t('modules.gmail.title'),
-      desc: t('modules.gmail.desc'),
-      image: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=800",
+      title: t("modules.gmail.title"),
+      desc: t("modules.gmail.desc"),
+      image:
+        "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=800",
       mins: 20,
-      status: t('ui.notStarted'),
+      status: t("ui.notStarted"),
       category: "communication",
       icon: "mail",
     },
     {
       id: 2,
-      title: t('modules.whatsapp.title'),
-      desc: t('modules.whatsapp.desc'),
-      image: "https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=800",
+      title: t("modules.whatsapp.title"),
+      desc: t("modules.whatsapp.desc"),
+      image:
+        "https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=800",
       mins: 25,
-      status: t('ui.notStarted'),
+      status: t("ui.notStarted"),
       category: "communication",
       icon: "chatbubbles",
     },
     {
       id: 3,
-      title: t('modules.googlemaps.title'),
-      desc: t('modules.googlemaps.desc'),
-      image: "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=800",
+      title: t("modules.googlemaps.title"),
+      desc: t("modules.googlemaps.desc"),
+      image:
+        "https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=800",
       mins: 18,
-      status: t('ui.notStarted'),
+      status: t("ui.notStarted"),
       category: "navigation",
       icon: "map",
     },
     {
       id: 4,
-      title: t('modules.onlinebanking.title'),
-      desc: t('modules.onlinebanking.desc'),
+      title: t("modules.onlinebanking.title"),
+      desc: t("modules.onlinebanking.desc"),
       image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800",
       mins: 30,
-      status: t('ui.notStarted'),
+      status: t("ui.notStarted"),
       category: "finance",
       icon: "card",
     },
     {
       id: 5,
-      title: t('modules.youtube.title'),
-      desc: t('modules.youtube.desc'),
-      image: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800",
+      title: t("modules.youtube.title"),
+      desc: t("modules.youtube.desc"),
+      image:
+        "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800",
       mins: 15,
-      status: t('ui.notStarted'),
+      status: t("ui.notStarted"),
       category: "entertainment",
       icon: "play-circle",
     },
     {
       id: 6,
-      title: t('modules.onlineshopping.title'),
-      desc: t('modules.onlineshopping.desc'),
-      image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800",
+      title: t("modules.onlineshopping.title"),
+      desc: t("modules.onlineshopping.desc"),
+      image:
+        "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800",
       mins: 22,
-      status: t('ui.notStarted'),
+      status: t("ui.notStarted"),
       category: "shopping",
       icon: "cart",
     },
@@ -747,8 +1017,8 @@ export const initDB = () => {
     {
       id: 1,
       module_id: 1,
-      title: t('lessons.gmail_inbox.title'),
-      description: t('lessons.gmail_inbox.desc'),
+      title: t("lessons.gmail_inbox.title"),
+      description: t("lessons.gmail_inbox.desc"),
       duration: 5,
       type: "tutorial",
       content_type: "inbox_basics",
@@ -758,8 +1028,8 @@ export const initDB = () => {
     {
       id: 2,
       module_id: 1,
-      title: t('lessons.gmail_reading.title'),
-      description: t('lessons.gmail_reading.desc'),
+      title: t("lessons.gmail_reading.title"),
+      description: t("lessons.gmail_reading.desc"),
       duration: 4,
       type: "tutorial",
       content_type: "reading_email",
@@ -769,8 +1039,8 @@ export const initDB = () => {
     {
       id: 3,
       module_id: 1,
-      title: t('lessons.gmail_compose.title'),
-      description: t('lessons.gmail_compose.desc'),
+      title: t("lessons.gmail_compose.title"),
+      description: t("lessons.gmail_compose.desc"),
       duration: 6,
       type: "tutorial",
       content_type: "compose_email",
@@ -780,21 +1050,21 @@ export const initDB = () => {
     {
       id: 4,
       module_id: 1,
-      title: t('lessons.gmail_quiz.title'),
-      description: t('lessons.gmail_quiz.desc'),
+      title: t("lessons.gmail_quiz.title"),
+      description: t("lessons.gmail_quiz.desc"),
       duration: 5,
       type: "quiz",
       content_type: "quiz",
       completed: false,
       order: 4,
     },
-    
+
     // WhatsApp Lessons (Module 2)
     {
       id: 5,
       module_id: 2,
-      title: t('lessons.whatsapp_setup.title'),
-      description: t('lessons.whatsapp_setup.desc'),
+      title: t("lessons.whatsapp_setup.title"),
+      description: t("lessons.whatsapp_setup.desc"),
       duration: 6,
       type: "tutorial",
       content_type: "whatsapp_setup",
@@ -804,8 +1074,8 @@ export const initDB = () => {
     {
       id: 6,
       module_id: 2,
-      title: t('lessons.whatsapp_messaging.title'),
-      description: t('lessons.whatsapp_messaging.desc'),
+      title: t("lessons.whatsapp_messaging.title"),
+      description: t("lessons.whatsapp_messaging.desc"),
       duration: 5,
       type: "tutorial",
       content_type: "whatsapp_messaging",
@@ -815,8 +1085,8 @@ export const initDB = () => {
     {
       id: 7,
       module_id: 2,
-      title: t('lessons.whatsapp_media.title'),
-      description: t('lessons.whatsapp_media.desc'),
+      title: t("lessons.whatsapp_media.title"),
+      description: t("lessons.whatsapp_media.desc"),
       duration: 6,
       type: "tutorial",
       content_type: "whatsapp_media",
@@ -826,8 +1096,8 @@ export const initDB = () => {
     {
       id: 8,
       module_id: 2,
-      title: t('lessons.whatsapp_calls.title'),
-      description: t('lessons.whatsapp_calls.desc'),
+      title: t("lessons.whatsapp_calls.title"),
+      description: t("lessons.whatsapp_calls.desc"),
       duration: 4,
       type: "tutorial",
       content_type: "whatsapp_calls",
@@ -837,8 +1107,8 @@ export const initDB = () => {
     {
       id: 9,
       module_id: 2,
-      title: t('lessons.whatsapp_quiz.title'),
-      description: t('lessons.whatsapp_quiz.desc'),
+      title: t("lessons.whatsapp_quiz.title"),
+      description: t("lessons.whatsapp_quiz.desc"),
       duration: 4,
       type: "quiz",
       content_type: "quiz",
@@ -850,8 +1120,8 @@ export const initDB = () => {
     {
       id: 10,
       module_id: 3,
-      title: t('lessons.maps_search.title'),
-      description: t('lessons.maps_search.desc'),
+      title: t("lessons.maps_search.title"),
+      description: t("lessons.maps_search.desc"),
       duration: 5,
       type: "tutorial",
       content_type: "maps_search",
@@ -861,8 +1131,8 @@ export const initDB = () => {
     {
       id: 11,
       module_id: 3,
-      title: t('lessons.maps_directions.title'),
-      description: t('lessons.maps_directions.desc'),
+      title: t("lessons.maps_directions.title"),
+      description: t("lessons.maps_directions.desc"),
       duration: 6,
       type: "tutorial",
       content_type: "maps_directions",
@@ -872,8 +1142,8 @@ export const initDB = () => {
     {
       id: 12,
       module_id: 3,
-      title: t('lessons.maps_features.title'),
-      description: t('lessons.maps_features.desc'),
+      title: t("lessons.maps_features.title"),
+      description: t("lessons.maps_features.desc"),
       duration: 4,
       type: "tutorial",
       content_type: "maps_features",
@@ -883,8 +1153,8 @@ export const initDB = () => {
     {
       id: 13,
       module_id: 3,
-      title: t('lessons.maps_quiz.title'),
-      description: t('lessons.maps_quiz.desc'),
+      title: t("lessons.maps_quiz.title"),
+      description: t("lessons.maps_quiz.desc"),
       duration: 3,
       type: "quiz",
       content_type: "quiz",
@@ -896,8 +1166,8 @@ export const initDB = () => {
     {
       id: 14,
       module_id: 4,
-      title: t('lessons.banking_login.title'),
-      description: t('lessons.banking_login.desc'),
+      title: t("lessons.banking_login.title"),
+      description: t("lessons.banking_login.desc"),
       duration: 6,
       type: "tutorial",
       content_type: "banking_login",
@@ -907,8 +1177,8 @@ export const initDB = () => {
     {
       id: 15,
       module_id: 4,
-      title: t('lessons.banking_balance.title'),
-      description: t('lessons.banking_balance.desc'),
+      title: t("lessons.banking_balance.title"),
+      description: t("lessons.banking_balance.desc"),
       duration: 5,
       type: "tutorial",
       content_type: "banking_balance",
@@ -918,8 +1188,8 @@ export const initDB = () => {
     {
       id: 16,
       module_id: 4,
-      title: t('lessons.banking_transfer.title'),
-      description: t('lessons.banking_transfer.desc'),
+      title: t("lessons.banking_transfer.title"),
+      description: t("lessons.banking_transfer.desc"),
       duration: 8,
       type: "tutorial",
       content_type: "banking_transfer",
@@ -929,8 +1199,8 @@ export const initDB = () => {
     {
       id: 17,
       module_id: 4,
-      title: t('lessons.banking_safety.title'),
-      description: t('lessons.banking_safety.desc'),
+      title: t("lessons.banking_safety.title"),
+      description: t("lessons.banking_safety.desc"),
       duration: 6,
       type: "tutorial",
       content_type: "banking_safety",
@@ -940,8 +1210,8 @@ export const initDB = () => {
     {
       id: 18,
       module_id: 4,
-      title: t('lessons.banking_quiz.title'),
-      description: t('lessons.banking_quiz.desc'),
+      title: t("lessons.banking_quiz.title"),
+      description: t("lessons.banking_quiz.desc"),
       duration: 5,
       type: "quiz",
       content_type: "quiz",
@@ -953,8 +1223,8 @@ export const initDB = () => {
     {
       id: 19,
       module_id: 5,
-      title: t('lessons.youtube_search.title'),
-      description: t('lessons.youtube_search.desc'),
+      title: t("lessons.youtube_search.title"),
+      description: t("lessons.youtube_search.desc"),
       duration: 4,
       type: "tutorial",
       content_type: "youtube_search",
@@ -964,8 +1234,8 @@ export const initDB = () => {
     {
       id: 20,
       module_id: 5,
-      title: t('lessons.youtube_watching.title'),
-      description: t('lessons.youtube_watching.desc'),
+      title: t("lessons.youtube_watching.title"),
+      description: t("lessons.youtube_watching.desc"),
       duration: 5,
       type: "tutorial",
       content_type: "youtube_watching",
@@ -975,8 +1245,8 @@ export const initDB = () => {
     {
       id: 21,
       module_id: 5,
-      title: t('lessons.youtube_subscribe.title'),
-      description: t('lessons.youtube_subscribe.desc'),
+      title: t("lessons.youtube_subscribe.title"),
+      description: t("lessons.youtube_subscribe.desc"),
       duration: 3,
       type: "tutorial",
       content_type: "youtube_subscribe",
@@ -986,8 +1256,8 @@ export const initDB = () => {
     {
       id: 22,
       module_id: 5,
-      title: t('lessons.youtube_quiz.title'),
-      description: t('lessons.youtube_quiz.desc'),
+      title: t("lessons.youtube_quiz.title"),
+      description: t("lessons.youtube_quiz.desc"),
       duration: 3,
       type: "quiz",
       content_type: "quiz",
@@ -999,8 +1269,8 @@ export const initDB = () => {
     {
       id: 23,
       module_id: 6,
-      title: t('lessons.shopping_browsing.title'),
-      description: t('lessons.shopping_browsing.desc'),
+      title: t("lessons.shopping_browsing.title"),
+      description: t("lessons.shopping_browsing.desc"),
       duration: 6,
       type: "tutorial",
       content_type: "shopping_browsing",
@@ -1010,8 +1280,8 @@ export const initDB = () => {
     {
       id: 24,
       module_id: 6,
-      title: t('lessons.shopping_checkout.title'),
-      description: t('lessons.shopping_checkout.desc'),
+      title: t("lessons.shopping_checkout.title"),
+      description: t("lessons.shopping_checkout.desc"),
       duration: 8,
       type: "tutorial",
       content_type: "shopping_checkout",
@@ -1021,8 +1291,8 @@ export const initDB = () => {
     {
       id: 25,
       module_id: 6,
-      title: t('lessons.shopping_safety.title'),
-      description: t('lessons.shopping_safety.desc'),
+      title: t("lessons.shopping_safety.title"),
+      description: t("lessons.shopping_safety.desc"),
       duration: 5,
       type: "tutorial",
       content_type: "shopping_safety",
@@ -1032,8 +1302,8 @@ export const initDB = () => {
     {
       id: 26,
       module_id: 6,
-      title: t('lessons.shopping_quiz.title'),
-      description: t('lessons.shopping_quiz.desc'),
+      title: t("lessons.shopping_quiz.title"),
+      description: t("lessons.shopping_quiz.desc"),
       duration: 3,
       type: "quiz",
       content_type: "quiz",
@@ -1043,48 +1313,89 @@ export const initDB = () => {
   ];
 
   // Initialize progress for all modules
-  progress = modules.map(m => ({
+  progress = modules.map((m) => ({
     module_id: m.id,
-    status: t('ui.notStarted'),
+    status: t("ui.notStarted"),
     completed_lessons: 0,
-    total_lessons: lessons.filter(l => l.module_id === m.id).length,
+    total_lessons: lessons.filter((l) => l.module_id === m.id).length,
   }));
 
-  console.log(`Database initialized with ${modules.length} modules in ${currentLanguage} language`);
+  console.log(
+    `Database initialized with ${modules.length} modules in ${currentLanguage} language`,
+  );
 };
 
 // Refresh module and lesson translations
 export const refreshTranslations = () => {
-  modules = modules.map(m => {
-    let key = '';
-    switch(m.id) {
-      case 1: key = 'gmail'; break;
-      case 2: key = 'whatsapp'; break;
-      case 3: key = 'googlemaps'; break;
-      case 4: key = 'onlinebanking'; break;
-      case 5: key = 'youtube'; break;
-      case 6: key = 'onlineshopping'; break;
+  modules = modules.map((m) => {
+    let key = "";
+    switch (m.id) {
+      case 1:
+        key = "gmail";
+        break;
+      case 2:
+        key = "whatsapp";
+        break;
+      case 3:
+        key = "googlemaps";
+        break;
+      case 4:
+        key = "onlinebanking";
+        break;
+      case 5:
+        key = "youtube";
+        break;
+      case 6:
+        key = "onlineshopping";
+        break;
     }
     return {
       ...m,
       title: t(`modules.${key}.title`),
       desc: t(`modules.${key}.desc`),
-      status: m.status === 'Completed' || m.status === 'Selesai' || m.status === '已完成' || m.status === 'முடிந்தது' 
-        ? t('ui.completed')
-        : m.status === 'In Progress' || m.status === 'Dalam Kemajuan' || m.status === '进行中' || m.status === 'முன்னேற்றத்தில்'
-        ? t('ui.inProgress')
-        : t('ui.notStarted'),
+      status:
+        m.status === "Completed" ||
+        m.status === "Selesai" ||
+        m.status === "已完成" ||
+        m.status === "முடிந்தது"
+          ? t("ui.completed")
+          : m.status === "In Progress" ||
+              m.status === "Dalam Kemajuan" ||
+              m.status === "进行中" ||
+              m.status === "முன்னேற்றத்தில்"
+            ? t("ui.inProgress")
+            : t("ui.notStarted"),
     };
   });
 
-  lessons = lessons.map(l => {
+  lessons = lessons.map((l) => {
     const lessonKeys = [
-      'gmail_inbox', 'gmail_reading', 'gmail_compose', 'gmail_quiz',
-      'whatsapp_setup', 'whatsapp_messaging', 'whatsapp_media', 'whatsapp_calls', 'whatsapp_quiz',
-      'maps_search', 'maps_directions', 'maps_features', 'maps_quiz',
-      'banking_login', 'banking_balance', 'banking_transfer', 'banking_safety', 'banking_quiz',
-      'youtube_search', 'youtube_watching', 'youtube_subscribe', 'youtube_quiz',
-      'shopping_browsing', 'shopping_checkout', 'shopping_safety', 'shopping_quiz',
+      "gmail_inbox",
+      "gmail_reading",
+      "gmail_compose",
+      "gmail_quiz",
+      "whatsapp_setup",
+      "whatsapp_messaging",
+      "whatsapp_media",
+      "whatsapp_calls",
+      "whatsapp_quiz",
+      "maps_search",
+      "maps_directions",
+      "maps_features",
+      "maps_quiz",
+      "banking_login",
+      "banking_balance",
+      "banking_transfer",
+      "banking_safety",
+      "banking_quiz",
+      "youtube_search",
+      "youtube_watching",
+      "youtube_subscribe",
+      "youtube_quiz",
+      "shopping_browsing",
+      "shopping_checkout",
+      "shopping_safety",
+      "shopping_quiz",
     ];
     const key = lessonKeys[l.id - 1];
     return {
@@ -1094,13 +1405,20 @@ export const refreshTranslations = () => {
     };
   });
 
-  progress = progress.map(p => ({
+  progress = progress.map((p) => ({
     ...p,
-    status: p.status === 'Completed' || p.status === 'Selesai' || p.status === '已完成' || p.status === 'முடிந்தது'
-      ? t('ui.completed')
-      : p.status === 'In Progress' || p.status === 'Dalam Kemajuan' || p.status === '进行中' || p.status === 'முன்னேற்றத்தில்'
-      ? t('ui.inProgress')
-      : t('ui.notStarted'),
+    status:
+      p.status === "Completed" ||
+      p.status === "Selesai" ||
+      p.status === "已完成" ||
+      p.status === "முடிந்தது"
+        ? t("ui.completed")
+        : p.status === "In Progress" ||
+            p.status === "Dalam Kemajuan" ||
+            p.status === "进行中" ||
+            p.status === "முன்னேற்றத்தில்"
+          ? t("ui.inProgress")
+          : t("ui.notStarted"),
   }));
 };
 
@@ -1110,20 +1428,22 @@ export const getModules = (): Module[] => {
     const moduleProgress = progress.find((p) => p.module_id === module.id);
     return {
       ...module,
-      status: moduleProgress?.status || t('ui.notStarted'),
+      status: moduleProgress?.status || t("ui.notStarted"),
     };
   });
 };
 
 // Get modules by category
 export const getModulesByCategory = (category: string): Module[] => {
-  return modules.filter(m => m.category === category).map((module) => {
-    const moduleProgress = progress.find((p) => p.module_id === module.id);
-    return {
-      ...module,
-      status: moduleProgress?.status || t('ui.notStarted'),
-    };
-  });
+  return modules
+    .filter((m) => m.category === category)
+    .map((module) => {
+      const moduleProgress = progress.find((p) => p.module_id === module.id);
+      return {
+        ...module,
+        status: moduleProgress?.status || t("ui.notStarted"),
+      };
+    });
 };
 
 // Get a specific module by ID
@@ -1134,7 +1454,7 @@ export const getModuleById = (id: number): Module | null => {
   const moduleProgress = progress.find((p) => p.module_id === id);
   return {
     ...module,
-    status: moduleProgress?.status || t('ui.notStarted'),
+    status: moduleProgress?.status || t("ui.notStarted"),
   };
 };
 
@@ -1160,24 +1480,24 @@ export const markLessonComplete = (lessonId: number) => {
   const moduleProgress = progress.find((p) => p.module_id === lesson.module_id);
   if (moduleProgress) {
     const completedCount = lessons.filter(
-      (l) => l.module_id === lesson.module_id && l.completed
+      (l) => l.module_id === lesson.module_id && l.completed,
     ).length;
-    
+
     moduleProgress.completed_lessons = completedCount;
-    
+
     if (completedCount === moduleProgress.total_lessons) {
-      moduleProgress.status = t('ui.completed');
-      
+      moduleProgress.status = t("ui.completed");
+
       const module = modules.find((m) => m.id === lesson.module_id);
       if (module) {
-        module.status = t('ui.completed');
+        module.status = t("ui.completed");
       }
     } else if (completedCount > 0) {
-      moduleProgress.status = t('ui.inProgress');
-      
+      moduleProgress.status = t("ui.inProgress");
+
       const module = modules.find((m) => m.id === lesson.module_id);
       if (module) {
-        module.status = t('ui.inProgress');
+        module.status = t("ui.inProgress");
       }
     }
   }
@@ -1212,16 +1532,18 @@ export const resetProgress = () => {
   });
 
   progress.forEach((p) => {
-    p.status = t('ui.notStarted');
+    p.status = t("ui.notStarted");
     p.completed_lessons = 0;
   });
 
   modules.forEach((m) => {
-    m.status = t('ui.notStarted');
+    m.status = t("ui.notStarted");
   });
 
   console.log("All progress reset");
 };
+
+// Assessment Translations
 
 // Get translation helper (export for use in components)
 export { t };
