@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -11,7 +11,7 @@ import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 // Import your database services
-import { getModuleById, getLessonsByModule, updateModuleProgress } from "../../../src/services/db";
+import { getModuleById, getLessonsByModule } from "../../../src/services/db";
 
 export default function ModuleDetail() {
   const { id } = useLocalSearchParams();
