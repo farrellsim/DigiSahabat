@@ -55,7 +55,8 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for voice messages."
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "@react-native-voice/voice"
     ],
     "experiments": {
       "typedRoutes": true,

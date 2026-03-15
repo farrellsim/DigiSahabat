@@ -1,23 +1,29 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { Audio } from "expo-av";
+import * as Speech from "expo-speech";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  Keyboard,
   TouchableWithoutFeedback,
+  View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
-const API_URL = "http://192.168.1.5:4000/chat";
+const API_URL = "http://192.168.1.12:4000/chat";
+const TRANSCRIBE_URL = "http://192.168.1.12:4000/transcribe";
 
 type Role = "user" | "assistant";
 type Msg = { id: string; role: Role; content: string };
+type Status = "idle" | "listening" | "thinking" | "speaking";
 
+// ─── Typing dots ───────────────────────────────────────────────────────────────
 function TypingDots() {
   const [dots, setDots] = useState(".");
   useEffect(() => {
@@ -31,9 +37,277 @@ function TypingDots() {
   );
 }
 
+// ─── AI Talk Screen ────────────────────────────────────────────────────────────
+function AITalkScreen({ onClose }: { onClose: () => void }) {
+  const [status, setStatus] = useState<Status>("idle");
+  const [reply, setReply] = useState("");
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+
+  useEffect(() => {
+    return () => {
+      Speech.stop();
+      if (recording) recording.stopAndUnloadAsync();
+    };
+  }, []);
+
+  const startListening = async () => {
+    try {
+      const { granted } = await Audio.requestPermissionsAsync();
+      if (!granted) {
+        alert("Microphone permission is required!");
+        return;
+      }
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+      const { recording: rec } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY,
+      );
+      setRecording(rec);
+      setStatus("listening");
+      setReply("");
+    } catch (e) {
+      console.error("Mic error:", e);
+    }
+  };
+
+  const stopListening = async () => {
+    if (!recording) return;
+    setStatus("thinking");
+    try {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      setRecording(null);
+
+      if (!uri) throw new Error("No audio URI");
+
+      // Send audio to backend for Gemini transcription
+      const formData = new FormData();
+      formData.append("audio", {
+        uri,
+        type: "audio/m4a",
+        name: "recording.m4a",
+      } as any);
+
+      const transcribeRes = await fetch(TRANSCRIBE_URL, {
+        method: "POST",
+        body: formData,
+      });
+
+      const { transcript } = await transcribeRes.json();
+      if (!transcript) throw new Error("Empty transcript");
+
+      await sendToGemini(transcript);
+    } catch (e) {
+      console.error("Stop error:", e);
+      setReply("Something went wrong. Please try again.");
+      setStatus("idle");
+    }
+  };
+
+  const sendToGemini = async (text: string) => {
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: text }],
+        }),
+      });
+      const data = await res.json();
+      const replyText =
+        typeof data?.reply === "string" && data.reply.trim().length > 0
+          ? data.reply
+          : "Sorry, I could not reply.";
+
+      setReply(replyText);
+      setStatus("speaking");
+
+      Speech.speak(replyText, {
+        language: "en",
+        pitch: 1.0,
+        rate: 0.95,
+        volume: 4.0,
+        onDone: () => setStatus("idle"),
+      });
+    } catch {
+      setReply("Could not reach the server.");
+      setStatus("idle");
+    }
+  };
+
+  const statusText = {
+    idle: "Tap the mic to start",
+    listening: "Listening...",
+    thinking: "Thinking...",
+    speaking: "Speaking...",
+  }[status];
+
+  const statusSub = {
+    idle: "",
+    listening: "Speak now, I'm all ears!",
+    thinking: "Give me a moment...",
+    speaking: reply,
+  }[status];
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#5a9e8f" }}>
+      {/* Back button */}
+      <TouchableOpacity
+        onPress={onClose}
+        style={{
+          margin: 20,
+          alignSelf: "flex-start",
+          backgroundColor: "rgba(255,255,255,0.25)",
+          borderRadius: 20,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 4,
+        }}
+      >
+        <Ionicons name="chevron-back" size={18} color="white" />
+        <Text style={{ color: "white", fontSize: 15 }}>Back</Text>
+      </TouchableOpacity>
+
+      {/* Mascot + ripple circles */}
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: 40,
+          }}
+        >
+          {status === "listening" && (
+            <>
+              <View
+                style={{
+                  position: "absolute",
+                  width: 220,
+                  height: 220,
+                  borderRadius: 110,
+                  borderWidth: 1,
+                  borderColor: "rgba(255,255,255,0.3)",
+                }}
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  width: 170,
+                  height: 170,
+                  borderRadius: 85,
+                  borderWidth: 1,
+                  borderColor: "rgba(255,255,255,0.4)",
+                }}
+              />
+            </>
+          )}
+          {/* Mascot */}
+          <View
+            style={{
+              width: 110,
+              height: 110,
+              borderRadius: 55,
+              backgroundColor: "white",
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#000",
+              shadowOpacity: 0.1,
+              shadowRadius: 10,
+              elevation: 4,
+            }}
+          >
+            <Text style={{ fontSize: 52 }}>🤖</Text>
+          </View>
+        </View>
+
+        {/* Status text */}
+        <Text
+          style={{
+            fontSize: 26,
+            fontWeight: "600",
+            color: "white",
+            marginBottom: 8,
+          }}
+        >
+          {statusText}
+        </Text>
+
+        {statusSub ? (
+          <Text
+            style={{
+              fontSize: 15,
+              color: "rgba(255,255,255,0.85)",
+              textAlign: "center",
+              paddingHorizontal: 40,
+              lineHeight: 22,
+            }}
+          >
+            {statusSub}
+          </Text>
+        ) : null}
+
+        {status === "thinking" && (
+          <ActivityIndicator
+            color="white"
+            size="large"
+            style={{ marginTop: 20 }}
+          />
+        )}
+      </View>
+
+      {/* Bottom button */}
+      <View style={{ alignItems: "center", paddingBottom: 50 }}>
+        {status === "listening" ? (
+          <TouchableOpacity
+            onPress={stopListening}
+            style={{
+              backgroundColor: "rgba(255,255,255,0.25)",
+              borderRadius: 30,
+              paddingHorizontal: 28,
+              paddingVertical: 14,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <Ionicons name="mic-off" size={20} color="white" />
+            <Text style={{ color: "white", fontSize: 16, fontWeight: "500" }}>
+              Stop Listening
+            </Text>
+          </TouchableOpacity>
+        ) : status === "idle" ? (
+          <TouchableOpacity
+            onPress={startListening}
+            style={{
+              backgroundColor: "rgba(255,255,255,0.25)",
+              borderRadius: 30,
+              paddingHorizontal: 28,
+              paddingVertical: 14,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <Ionicons name="mic" size={20} color="white" />
+            <Text style={{ color: "white", fontSize: 16, fontWeight: "500" }}>
+              Start Talking
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    </SafeAreaView>
+  );
+}
+
+// ─── Main Chat Screen ──────────────────────────────────────────────────────────
 export default function Index() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [showTalk, setShowTalk] = useState(false);
 
   const [messages, setMessages] = useState<Msg[]>([
     {
@@ -48,16 +322,15 @@ export default function Index() {
 
   const payloadMessages = useMemo(
     () => messages.map((m) => ({ role: m.role, content: m.content })),
-    [messages]
+    [messages],
   );
 
   const scrollToBottom = () => {
     requestAnimationFrame(() =>
-      listRef.current?.scrollToEnd({ animated: true })
+      listRef.current?.scrollToEnd({ animated: true }),
     );
   };
 
-  // Add/remove typing item INSIDE the list (no floating absolute bubble)
   const displayMessages = useMemo(() => {
     if (!isTyping) return messages;
     return [
@@ -107,7 +380,7 @@ export default function Index() {
           id: String(Date.now() + 2),
           role: "assistant",
           content:
-            "Sorry — I couldn’t reach the server. Check API_URL and backend.",
+            "Sorry — I couldn't reach the server. Check API_URL and backend.",
         },
       ]);
       scrollToBottom();
@@ -118,7 +391,6 @@ export default function Index() {
 
   const Bubble = ({ item }: { item: Msg }) => {
     const isAssistant = item.role === "assistant";
-
     return (
       <View className="flex-row px-6 mb-4">
         {isAssistant ? (
@@ -130,7 +402,6 @@ export default function Index() {
         ) : (
           <View className="w-10" />
         )}
-
         <View
           className={[
             "max-w-[78%] rounded-2xl bg-white border border-gray-200 px-4 py-3",
@@ -155,6 +426,9 @@ export default function Index() {
     );
   };
 
+  // Show AI Talk screen when call button pressed
+  if (showTalk) return <AITalkScreen onClose={() => setShowTalk(false)} />;
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <KeyboardAvoidingView
@@ -170,11 +444,9 @@ export default function Index() {
                 <TouchableOpacity className="mr-3">
                   <Ionicons name="chevron-back" size={24} color="#111827" />
                 </TouchableOpacity>
-
                 <View className="w-9 h-9 rounded-full bg-white border border-gray-200 items-center justify-center mr-3">
                   <Text>🤖</Text>
                 </View>
-
                 <View>
                   <Text className="text-[20px] font-semibold text-gray-900">
                     DigiBuddy
@@ -196,7 +468,7 @@ export default function Index() {
               onContentSizeChange={scrollToBottom}
             />
 
-            {/* Bottom area (input + fake tab bar) */}
+            {/* Bottom area */}
             <View className="bg-white border-t border-gray-100">
               <View className="px-5 pt-3 pb-4">
                 <View className="flex-row items-center">
@@ -226,6 +498,14 @@ export default function Index() {
 
                   <TouchableOpacity className="ml-3 w-14 h-14 rounded-2xl bg-white border border-gray-200 items-center justify-center">
                     <Ionicons name="mic" size={20} color="#111827" />
+                  </TouchableOpacity>
+
+                  {/* Call button → opens AI Talk screen */}
+                  <TouchableOpacity
+                    onPress={() => setShowTalk(true)}
+                    className="ml-3 w-14 h-14 rounded-2xl bg-green-600 items-center justify-center"
+                  >
+                    <Ionicons name="call" size={20} color="white" />
                   </TouchableOpacity>
                 </View>
               </View>
