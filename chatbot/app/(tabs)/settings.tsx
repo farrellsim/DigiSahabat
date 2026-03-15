@@ -7,10 +7,10 @@ import {
   Switch,
   Alert,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { clearSession, getSession, setSession } from "../../lib/protoSession";
-import { setLanguage, getLanguage, refreshTranslations, initDB } from "@/src/services/db";
+import { setLanguage, getLanguage, refreshTranslations, initDB, t } from "@/src/services/db";
 
 // Language options with flags and native names
 const LANGUAGES = [
@@ -22,22 +22,29 @@ const LANGUAGES = [
 
 export default function Settings() { 
   const [language, setLanguageState] = useState<'en' | 'ms' | 'zh'>('en');
-  const [textSize, setTextSize] = useState<"Small" | "Medium" | "Large">(
-    "Medium"
-  );
+  const [textSize, setTextSize] = useState<"Small" | "Medium" | "Large">("Medium");
   const [notifications, setNotifications] = useState(true);
   const [voice, setVoice] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(0); // Force re-render trigger
 
-  useEffect(() => {
-    (async () => {
-      const s = await getSession();
-      const currentLang = getLanguage();
-      setLanguageState(currentLang);
-      setTextSize(s.textSize ?? "Medium");
-      setNotifications(!!s.notifications);
-      setVoice(!!s.voice);
-    })();
-  }, []);
+  // Load settings when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      loadSettings();
+    }, [])
+  );
+
+  const loadSettings = async () => {
+    const s = await getSession();
+    const currentLang = getLanguage();
+    
+    console.log('📝 Loading settings, current language:', currentLang);
+    
+    setLanguageState(currentLang);
+    setTextSize(s.textSize ?? "Medium");
+    setNotifications(!!s.notifications);
+    setVoice(!!s.voice);
+  };
 
   const toggleNotif = async () => {
     const next = !notifications;
@@ -58,29 +65,43 @@ export default function Settings() {
 
   const changeLanguageInline = async (newLang: 'en' | 'ms' | 'zh') => {
     try {
-      // Update local state
+      console.log('🌍 Changing language to:', newLang);
+      
+      // Update local state immediately
       setLanguageState(newLang);
       
-      // Update database language
+      // Update database language - this will trigger subscribeToLanguageChange
       setLanguage(newLang);
-      
-      // Refresh all translations
-      refreshTranslations();
-      
-      // Re-initialize database with new language
-      initDB();
       
       // Save to session
       await setSession({ language: newLang });
       
-      // Show success message
-      Alert.alert(
-        "Language Changed",
-        "All learning modules have been updated to your selected language.",
-        [{ text: "OK" }]
-      );
+      // Force immediate re-render
+      setForceUpdate(prev => prev + 1);
+      
+      // Show success message in the new language
+      const successMessages = {
+        en: {
+          title: "Language Changed",
+          message: "All learning modules have been updated to your selected language.",
+        },
+        ms: {
+          title: "Bahasa Ditukar",
+          message: "Semua modul pembelajaran telah dikemas kini ke bahasa yang anda pilih.",
+        },
+        zh: {
+          title: "语言已更改",
+          message: "所有学习模块已更新为您选择的语言。",
+        },
+      };
+      
+      const msg = successMessages[newLang];
+      
+      Alert.alert(msg.title, msg.message, [{ text: "OK" }]);
+      
+      console.log('✅ Language changed successfully to:', newLang);
     } catch (error) {
-      console.error("Error changing language:", error);
+      console.error("❌ Error changing language:", error);
       Alert.alert("Error", "Failed to change language. Please try again.");
     }
   };
@@ -123,11 +144,11 @@ export default function Settings() {
   const currentLangInfo = LANGUAGES.find(l => l.code === language);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" key={`settings-${forceUpdate}`}>
       <View className="px-6 pt-10">
         <View className="flex-row items-center mb-5">
           <Text className="text-[18px] font-semibold text-gray-900">
-            Settings
+            {t("settings.title")}
           </Text>
         </View>
 
@@ -150,14 +171,14 @@ export default function Settings() {
               className="px-4 py-2 rounded-2xl bg-green-600"
             >
               <Text className="text-white text-[12px] font-semibold">
-                Change
+                {t("settings.languageChange")}
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Quick Language Options */}
           <View className="pt-3 border-t border-gray-100">
-            <Text className="text-[12px] text-gray-500 mb-2">Quick Select:</Text>
+            <Text className="text-[12px] text-gray-500 mb-2">{t("settings.languageQS")}</Text>
             <View className="flex-row flex-wrap gap-2">
               {LANGUAGES.map((lang) => {
                 const isSelected = language === lang.code;
@@ -202,10 +223,10 @@ export default function Settings() {
             </View>
             <View className="flex-1">
               <Text className="text-[14px] font-semibold text-gray-900">
-                Voice Assistance
+                {t("settings.voice")}
               </Text>
               <Text className="text-[12px] text-gray-500">
-                Hear instructions spoken aloud
+                {t("settings.voiceSub")}
               </Text>
             </View>
             <Switch value={voice} onValueChange={toggleVoice} />
@@ -224,10 +245,10 @@ export default function Settings() {
             </View>
             <View className="flex-1">
               <Text className="text-[14px] font-semibold text-gray-900">
-                Notifications
+                {t("settings.notification")}
               </Text>
               <Text className="text-[12px] text-gray-500">
-                Learning reminders & updates
+                {t("settings.notificationSub")}
               </Text>
             </View>
             <Switch value={notifications} onValueChange={toggleNotif} />
@@ -242,10 +263,10 @@ export default function Settings() {
             </View>
             <View>
               <Text className="text-[14px] font-semibold text-gray-900">
-                Text Size
+                {t("settings.textsize")}
               </Text>
               <Text className="text-[12px] text-gray-500">
-                Choose your preferred size
+                {t("settings.textsizeSub")}
               </Text>
             </View>
           </View>
@@ -269,10 +290,10 @@ export default function Settings() {
             </View>
             <View className="flex-1">
               <Text className="text-[14px] font-semibold text-gray-900">
-                Account
+                {t("settings.account")}
               </Text>
               <Text className="text-[12px] text-gray-500">
-                Change PIN / username / phone
+                {t("settings.accountSub")}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color="#111827" />
@@ -281,7 +302,7 @@ export default function Settings() {
 
         <TouchableOpacity onPress={signOut} className="items-center mt-2">
           <Text className="text-[14px] font-semibold text-red-500">
-            Sign Out
+            {t("settings.logout")}
           </Text>
         </TouchableOpacity>
       </View>

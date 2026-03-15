@@ -2,15 +2,15 @@
 // Peer-to-Peer Service for DigiSahabat (Updated - No Expo Crypto)
 // Handles device discovery, connection, and content distribution
 
-import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
-import CryptoJS from 'crypto-js'; // We'll use this instead
+import { NativeModules, NativeEventEmitter, Platform } from "react-native";
+import CryptoJS from "crypto-js"; // We'll use this instead
 
 // Types
 export interface Peer {
   id: string;
   name: string;
-  deviceType: 'android' | 'ios';
-  distance: 'near' | 'medium' | 'far';
+  deviceType: "android" | "ios";
+  distance: "near" | "medium" | "far";
   isSource: boolean;
   contentVersion: string;
   availableModules: number[];
@@ -33,7 +33,7 @@ export interface TransferProgress {
   progress: number;
   totalSize: number;
   transferredSize: number;
-  status: 'pending' | 'transferring' | 'completed' | 'failed';
+  status: "pending" | "transferring" | "completed" | "failed";
   speed: number; // bytes per second
 }
 
@@ -42,7 +42,7 @@ export interface MergeConflict {
   localVersion: string;
   remoteVersion: string;
   commonAncestor: string;
-  conflictType: 'progress' | 'content' | 'both';
+  conflictType: "progress" | "content" | "both";
   timestamp: number;
 }
 
@@ -83,12 +83,13 @@ class P2PService {
   private activeTransfers: Map<string, TransferProgress> = new Map();
   private eventEmitter: any = null;
   private useSimulation: boolean = false;
-  
+  private initializationPromise: Promise<void>;
+
   // Device info
-  private deviceId: string = '';
-  private deviceName: string = '';
-  private contentVersion: string = '1.0.0';
-  
+  private deviceId: string = "";
+  private deviceName: string = "";
+  private contentVersion: string = "1.0.0";
+
   // Callbacks
   private onPeerDiscovered?: (peer: Peer) => void;
   private onPeerLost?: (peerId: string) => void;
@@ -100,32 +101,37 @@ class P2PService {
   private onMergeConflict?: (conflict: MergeConflict) => void;
 
   constructor() {
-    this.initializeService();
+    this.initializationPromise = this.initializeService();
+  }
+
+  public async waitForInitialization(): Promise<void> {
+    await this.initializationPromise;
   }
 
   // Initialize service with platform detection
-  private async initializeService() {
+  private async initializeService(): Promise<void> {
     try {
       // Check if native modules are available
-      const hasNativeModule = Platform.OS === 'android' 
-        ? NativeModules.WiFiDirect !== undefined
-        : NativeModules.MultipeerConnectivity !== undefined;
-
+      const hasNativeModule =
+        Platform.OS === "android"
+          ? NativeModules.WiFiDirect !== undefined
+          : NativeModules.MultipeerConnectivity !== undefined;
       if (!hasNativeModule) {
-        console.warn('⚠️ Native P2P module not available. Using simulation mode for development.');
+        console.warn(
+          "⚠️ Native P2P module not available. Using simulation mode for development.",
+        );
         this.useSimulation = true;
         this.isInitialized = true;
-        return;
       }
 
-      if (Platform.OS === 'android') {
+      if (Platform.OS === "android") {
         await this.initializeAndroidWiFiDirect();
-      } else if (Platform.OS === 'ios') {
+      } else if (Platform.OS === "ios") {
         await this.initializeIOSMultipeer();
       }
+      this.isInitialized = true;
     } catch (error) {
-      console.error('Failed to initialize P2P service:', error);
-      console.log('📱 Falling back to simulation mode');
+      console.error("Failed to initialize:", error);
       this.useSimulation = true;
       this.isInitialized = true;
     }
@@ -136,17 +142,17 @@ class P2PService {
     try {
       const WiFiDirect = NativeModules.WiFiDirect;
       this.eventEmitter = new NativeEventEmitter(WiFiDirect);
-      
+
       // Set up event listeners
       this.setupEventListeners();
-      
+
       // Initialize Wi-Fi Direct
       await WiFiDirect.initialize();
-      
+
       this.isInitialized = true;
-      console.log('✅ Wi-Fi Direct initialized successfully');
+      console.log("✅ Wi-Fi Direct initialized successfully");
     } catch (error) {
-      console.error('Failed to initialize Wi-Fi Direct:', error);
+      console.error("Failed to initialize Wi-Fi Direct:", error);
       throw error;
     }
   }
@@ -156,17 +162,17 @@ class P2PService {
     try {
       const Multipeer = NativeModules.MultipeerConnectivity;
       this.eventEmitter = new NativeEventEmitter(Multipeer);
-      
+
       // Set up event listeners
       this.setupEventListeners();
-      
+
       // Initialize Multipeer
-      await Multipeer.initialize('digisahabat');
-      
+      await Multipeer.initialize("digisahabat");
+
       this.isInitialized = true;
-      console.log('✅ Multipeer Connectivity initialized successfully');
+      console.log("✅ Multipeer Connectivity initialized successfully");
     } catch (error) {
-      console.error('Failed to initialize Multipeer:', error);
+      console.error("Failed to initialize Multipeer:", error);
       throw error;
     }
   }
@@ -175,22 +181,31 @@ class P2PService {
   private setupEventListeners() {
     if (!this.eventEmitter) return;
 
-    this.eventEmitter.addListener('onPeerDiscovered', this.handlePeerDiscovered);
-    this.eventEmitter.addListener('onPeerLost', this.handlePeerLost);
-    this.eventEmitter.addListener('onConnectionRequest', this.handleConnectionRequest);
-    this.eventEmitter.addListener('onPeerConnected', this.handlePeerConnected);
-    this.eventEmitter.addListener('onPeerDisconnected', this.handlePeerDisconnected);
-    this.eventEmitter.addListener('onDataReceived', this.handleDataReceived);
+    this.eventEmitter.addListener(
+      "onPeerDiscovered",
+      this.handlePeerDiscovered,
+    );
+    this.eventEmitter.addListener("onPeerLost", this.handlePeerLost);
+    this.eventEmitter.addListener(
+      "onConnectionRequest",
+      this.handleConnectionRequest,
+    );
+    this.eventEmitter.addListener("onPeerConnected", this.handlePeerConnected);
+    this.eventEmitter.addListener(
+      "onPeerDisconnected",
+      this.handlePeerDisconnected,
+    );
+    this.eventEmitter.addListener("onDataReceived", this.handleDataReceived);
   }
 
   // Get native module or mock
   private getNativeModule() {
     if (this.useSimulation) {
-      return Platform.OS === 'android' ? MockWiFiDirect : MockMultipeer;
+      return Platform.OS === "android" ? MockWiFiDirect : MockMultipeer;
     }
-    
-    return Platform.OS === 'android' 
-      ? NativeModules.WiFiDirect 
+
+    return Platform.OS === "android"
+      ? NativeModules.WiFiDirect
       : NativeModules.MultipeerConnectivity;
   }
 
@@ -207,12 +222,14 @@ class P2PService {
 
   // Start discovering peers
   public async startDiscovery(): Promise<void> {
+    await this.waitForInitialization();
+
     if (!this.isInitialized) {
-      throw new Error('P2P Service not initialized');
+      throw new Error("P2P Service not initialized");
     }
 
     if (this.isDiscovering) {
-      console.log('Already discovering');
+      console.log("Already discovering");
       return;
     }
 
@@ -220,14 +237,14 @@ class P2PService {
       const module = this.getNativeModule();
       await module.startDiscovery();
       this.isDiscovering = true;
-      console.log('📡 Started peer discovery');
+      console.log("📡 Started peer discovery");
 
       // Simulate discovery in dev mode
       if (this.useSimulation) {
         this.simulateDiscovery();
       }
     } catch (error) {
-      console.error('Failed to start discovery:', error);
+      console.error("Failed to start discovery:", error);
       throw error;
     }
   }
@@ -240,21 +257,21 @@ class P2PService {
       const module = this.getNativeModule();
       await module.stopDiscovery();
       this.isDiscovering = false;
-      console.log('🛑 Stopped peer discovery');
+      console.log("🛑 Stopped peer discovery");
     } catch (error) {
-      console.error('Failed to stop discovery:', error);
+      console.error("Failed to stop discovery:", error);
     }
   }
 
   // Start advertising as a source node
   public async startAdvertising(availableModules: number[]): Promise<void> {
     if (!this.isInitialized) {
-      throw new Error('P2P Service not initialized');
+      throw new Error("P2P Service not initialized");
     }
 
     try {
       const module = this.getNativeModule();
-      
+
       const advertisementData = {
         deviceName: this.deviceName,
         deviceId: this.deviceId,
@@ -265,9 +282,9 @@ class P2PService {
 
       await module.startAdvertising(advertisementData);
       this.isAdvertising = true;
-      console.log('📢 Started advertising as source node');
+      console.log("📢 Started advertising as source node");
     } catch (error) {
-      console.error('Failed to start advertising:', error);
+      console.error("Failed to start advertising:", error);
       throw error;
     }
   }
@@ -280,9 +297,9 @@ class P2PService {
       const module = this.getNativeModule();
       await module.stopAdvertising();
       this.isAdvertising = false;
-      console.log('🛑 Stopped advertising');
+      console.log("🛑 Stopped advertising");
     } catch (error) {
-      console.error('Failed to stop advertising:', error);
+      console.error("Failed to stop advertising:", error);
     }
   }
 
@@ -290,7 +307,7 @@ class P2PService {
   public async connectToPeer(peerId: string): Promise<void> {
     const peer = this.discoveredPeers.get(peerId);
     if (!peer) {
-      throw new Error('Peer not found');
+      throw new Error("Peer not found");
     }
 
     try {
@@ -305,7 +322,7 @@ class P2PService {
         }, 1000);
       }
     } catch (error) {
-      console.error('Failed to connect to peer:', error);
+      console.error("Failed to connect to peer:", error);
       throw error;
     }
   }
@@ -313,7 +330,7 @@ class P2PService {
   // Disconnect from a peer
   public async disconnectFromPeer(peerId: string): Promise<void> {
     if (!this.connectedPeers.has(peerId)) {
-      console.log('Peer not connected');
+      console.log("Peer not connected");
       return;
     }
 
@@ -323,30 +340,33 @@ class P2PService {
       this.connectedPeers.delete(peerId);
       console.log(`❌ Disconnected from peer: ${peerId}`);
     } catch (error) {
-      console.error('Failed to disconnect from peer:', error);
+      console.error("Failed to disconnect from peer:", error);
     }
   }
 
   // Request content from peer
-  public async requestContent(peerId: string, moduleIds: number[]): Promise<void> {
+  public async requestContent(
+    peerId: string,
+    moduleIds: number[],
+  ): Promise<void> {
     if (!this.connectedPeers.has(peerId)) {
-      throw new Error('Peer not connected');
+      throw new Error("Peer not connected");
     }
 
     try {
       const module = this.getNativeModule();
-      
+
       const request = {
-        type: 'CONTENT_REQUEST',
+        type: "CONTENT_REQUEST",
         moduleIds: moduleIds,
         requesterId: this.deviceId,
         timestamp: Date.now(),
       };
 
       await module.sendData(peerId, JSON.stringify(request));
-      
+
       // Initialize transfer tracking
-      moduleIds.forEach(moduleId => {
+      moduleIds.forEach((moduleId) => {
         const transferId = `${peerId}_${moduleId}`;
         this.activeTransfers.set(transferId, {
           peerId,
@@ -354,19 +374,21 @@ class P2PService {
           progress: 0,
           totalSize: 0,
           transferredSize: 0,
-          status: 'pending',
+          status: "pending",
           speed: 0,
         });
       });
 
-      console.log(`📥 Requested modules ${moduleIds.join(', ')} from peer ${peerId}`);
+      console.log(
+        `📥 Requested modules ${moduleIds.join(", ")} from peer ${peerId}`,
+      );
 
       // Simulate transfer in dev mode
       if (this.useSimulation) {
         this.simulateTransfer(peerId, moduleIds);
       }
     } catch (error) {
-      console.error('Failed to request content:', error);
+      console.error("Failed to request content:", error);
       throw error;
     }
   }
@@ -381,11 +403,11 @@ class P2PService {
   private chunkData(data: any, chunkSize: number): any[] {
     const dataString = JSON.stringify(data);
     const chunks: any[] = [];
-    
+
     for (let i = 0; i < dataString.length; i += chunkSize) {
       chunks.push(dataString.slice(i, i + chunkSize));
     }
-    
+
     return chunks;
   }
 
@@ -397,7 +419,7 @@ class P2PService {
       deviceType: peerData.deviceType,
       distance: this.calculateDistance(peerData.signalStrength),
       isSource: peerData.isSource || false,
-      contentVersion: peerData.contentVersion || '1.0.0',
+      contentVersion: peerData.contentVersion || "1.0.0",
       availableModules: peerData.availableModules || [],
       lastSeen: new Date(),
       signalStrength: peerData.signalStrength || 0,
@@ -421,9 +443,9 @@ class P2PService {
       id: peerData.id,
       name: peerData.name,
       deviceType: peerData.deviceType,
-      distance: 'near',
+      distance: "near",
       isSource: peerData.isSource || false,
-      contentVersion: peerData.contentVersion || '1.0.0',
+      contentVersion: peerData.contentVersion || "1.0.0",
       availableModules: peerData.availableModules || [],
       lastSeen: new Date(),
       signalStrength: peerData.signalStrength || 0,
@@ -431,9 +453,9 @@ class P2PService {
 
     // Ask user for approval
     const accepted = await this.onConnectionRequest?.(peer);
-    
+
     const module = this.getNativeModule();
-    
+
     if (accepted) {
       await module.acceptConnection(peerData.id);
       console.log(`✅ Accepted connection from: ${peer.name}`);
@@ -449,9 +471,9 @@ class P2PService {
       id: peerData.id,
       name: peerData.name,
       deviceType: peerData.deviceType,
-      distance: 'near',
+      distance: "near",
       isSource: peerData.isSource || false,
-      contentVersion: peerData.contentVersion || '1.0.0',
+      contentVersion: peerData.contentVersion || "1.0.0",
       availableModules: peerData.availableModules || [],
       lastSeen: new Date(),
       signalStrength: peerData.signalStrength || 0,
@@ -473,21 +495,21 @@ class P2PService {
   private handleDataReceived = async (data: any) => {
     try {
       const message = JSON.parse(data.message);
-      
+
       switch (message.type) {
-        case 'CONTENT_REQUEST':
-          console.log('📥 Received content request');
+        case "CONTENT_REQUEST":
+          console.log("📥 Received content request");
           break;
-        
-        case 'CONTENT_CHUNK':
+
+        case "CONTENT_CHUNK":
           await this.handleContentChunk(data.peerId, message);
           break;
-        
+
         default:
-          console.log('Unknown message type:', message.type);
+          console.log("Unknown message type:", message.type);
       }
     } catch (error) {
-      console.error('Failed to handle received data:', error);
+      console.error("Failed to handle received data:", error);
     }
   };
 
@@ -495,41 +517,43 @@ class P2PService {
   private async handleContentChunk(peerId: string, message: any) {
     const transferId = `${peerId}_${message.moduleId}`;
     const transfer = this.activeTransfers.get(transferId);
-    
+
     if (!transfer) {
-      console.warn('Received chunk for unknown transfer');
+      console.warn("Received chunk for unknown transfer");
       return;
     }
 
     // Update transfer progress
     const progress = ((message.chunkIndex + 1) / message.totalChunks) * 100;
     transfer.progress = progress;
-    transfer.status = progress === 100 ? 'completed' : 'transferring';
-    
+    transfer.status = progress === 100 ? "completed" : "transferring";
+
     this.onTransferProgress?.(transfer);
-    
+
     if (progress === 100) {
-      console.log(`✅ Completed receiving module ${message.moduleId} from ${peerId}`);
+      console.log(
+        `✅ Completed receiving module ${message.moduleId} from ${peerId}`,
+      );
     }
   }
 
   // Calculate distance based on signal strength
-  private calculateDistance(signalStrength: number): 'near' | 'medium' | 'far' {
-    if (signalStrength > -50) return 'near';
-    if (signalStrength > -70) return 'medium';
-    return 'far';
+  private calculateDistance(signalStrength: number): "near" | "medium" | "far" {
+    if (signalStrength > -50) return "near";
+    if (signalStrength > -70) return "medium";
+    return "far";
   }
 
   // Simulate discovery for development
   private simulateDiscovery() {
     setTimeout(() => {
       const mockPeer: Peer = {
-        id: 'sim_peer_1',
-        name: 'Test Device',
-        deviceType: Platform.OS as 'android' | 'ios',
-        distance: 'near',
+        id: "sim_peer_1",
+        name: "Test Device",
+        deviceType: Platform.OS as "android" | "ios",
+        distance: "near",
         isSource: true,
-        contentVersion: '1.0.0',
+        contentVersion: "1.0.0",
         availableModules: [1, 2, 3],
         lastSeen: new Date(),
         signalStrength: -45,
@@ -544,20 +568,20 @@ class P2PService {
       let progress = 0;
       const interval = setInterval(() => {
         progress += 10;
-        
+
         const transferId = `${peerId}_${moduleId}`;
         const transfer = this.activeTransfers.get(transferId);
-        
+
         if (transfer) {
           transfer.progress = progress;
-          transfer.status = progress === 100 ? 'completed' : 'transferring';
+          transfer.status = progress === 100 ? "completed" : "transferring";
           transfer.transferredSize = (progress / 100) * 5000000; // 5MB
           transfer.totalSize = 5000000;
           transfer.speed = 512000; // 512 KB/s
-          
+
           this.onTransferProgress?.(transfer);
         }
-        
+
         if (progress >= 100) {
           clearInterval(interval);
         }
@@ -610,29 +634,29 @@ class P2PService {
   public cleanup(): void {
     this.stopDiscovery();
     this.stopAdvertising();
-    
+
     // Disconnect all peers
     this.connectedPeers.forEach((_, peerId) => {
       this.disconnectFromPeer(peerId);
     });
-    
+
     // Clear maps
     this.connectedPeers.clear();
     this.discoveredPeers.clear();
     this.activeTransfers.clear();
-    
+
     // Remove event listeners
     if (this.eventEmitter) {
-      this.eventEmitter.removeAllListeners('onPeerDiscovered');
-      this.eventEmitter.removeAllListeners('onPeerLost');
-      this.eventEmitter.removeAllListeners('onConnectionRequest');
-      this.eventEmitter.removeAllListeners('onPeerConnected');
-      this.eventEmitter.removeAllListeners('onPeerDisconnected');
-      this.eventEmitter.removeAllListeners('onDataReceived');
+      this.eventEmitter.removeAllListeners("onPeerDiscovered");
+      this.eventEmitter.removeAllListeners("onPeerLost");
+      this.eventEmitter.removeAllListeners("onConnectionRequest");
+      this.eventEmitter.removeAllListeners("onPeerConnected");
+      this.eventEmitter.removeAllListeners("onPeerDisconnected");
+      this.eventEmitter.removeAllListeners("onDataReceived");
     }
-    
-    this.isInitialized = false;
-    console.log('🧹 P2P Service cleaned up');
+
+    // this.isInitialized = false;
+    console.log("🧹 P2P Service cleaned up");
   }
 }
 
