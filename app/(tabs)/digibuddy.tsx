@@ -15,8 +15,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Bot, Mic, Send, Volume2, Sparkles } from "lucide-react-native";
 import { theme, shadow } from "../../src/constants/theme";
+import { API_URL as API_BASE } from "../../src/config";
 
-const API_URL = "http://localhost:4000/chat";
+const API_URL = `${API_BASE}/ai/chat`;
 
 const SUGGESTED_CHIPS = [
   "What is a scam message?",
