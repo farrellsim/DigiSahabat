@@ -1,312 +1,310 @@
-# AI Learning Chatbot 🤖
+# DigiSahabat
 
-An intelligent mobile learning assistant built with React Native and powered by Google Gemini AI. This chatbot helps students learn by providing clear explanations, answering questions, and supporting both text and voice interactions.
+DigiSahabat is a digital literacy learning app for beginner learners, especially indigenous and rural communities who may prefer simple, friendly, voice-supported guidance. The showcase build combines a React Native mobile app with a lightweight backend for PIN login, learning modules, quizzes, progress, badges, friends, leaderboards, and DigiBuddy, an AI helper powered by Gemini.
 
-## Features ✨
+The project is designed as a final-year capstone prototype: polished enough to demo a complete learning journey, but intentionally simple enough to run locally.
 
-- 💬 **Text-based Chat**: Type questions and get instant AI-powered responses
-- 🎤 **Voice Input**: Hold the mic button to ask questions using your voice
-- 🔊 **Text-to-Speech**: Long-press any message to hear it read aloud
-- 📱 **Cross-platform**: Works on both iOS and Android devices
-- 🎨 **Modern UI**: Clean, intuitive chat interface with message bubbles
-- 🧠 **Context-aware**: Remembers conversation history for coherent discussions
-- ⚡ **Real-time Responses**: Fast AI-powered answers for educational queries
+## Features
 
-## Tech Stack 🛠️
+- 6-digit PIN login and signup
+- Learning module flow with lessons and quiz questions
+- Progress tracking and completion rewards
+- Badge system with the demo `Tech Explorer` badge
+- Friends list and friend requests by username
+- Weekly and friends leaderboard
+- DigiBuddy AI chat
+- Voice transcription endpoint using Gemini
+- Demo seed account and demo friends
 
-### Frontend (Mobile App)
+## Tech Stack
 
-- **React Native** with Expo - Cross-platform mobile development
-- **TypeScript** - Type-safe JavaScript
-- **NativeWind/Tailwind CSS** - Utility-first styling
-- **Expo AV** - Audio recording
-- **Expo Speech** - Text-to-speech functionality
+### Mobile App
 
-### Backend (API Server)
+- Expo React Native
+- Expo Router
+- NativeWind / Tailwind-style styling
+- Zustand
+- Expo Speech and voice-related packages
 
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web framework for API
-- **Google Gemini API** - AI language model
-- **Multer** - File upload handling
-- **dotenv** - Environment variable management
+### Backend
 
-## Prerequisites 📋
+- Node.js with ESM
+- Fastify
+- PostgreSQL
+- Drizzle ORM
+- Zod validation
+- Argon2 PIN hashing
+- Gemini API for chat and transcription
 
-Before you begin, ensure you have:
+## Project Structure
 
-- **Node.js** (v18 or higher) - [Download here](https://nodejs.org/)
-- **npm** or **yarn** - Comes with Node.js
-- **Expo Go app** - Install on your phone ([iOS](https://apps.apple.com/app/expo-go/id982107779) | [Android](https://play.google.com/store/apps/details?id=host.exp.exponent))
-- **Google Gemini API Key** - [Get free key](https://aistudio.google.com)
-
-## Installation 🚀
-
-### 1. Clone the Repository (if applicable)
-
-```bash
-git clone <your-repo-url>
-cd chatbot-project
+```text
+.
+├── app/                  # Expo Router screens
+├── src/                  # Mobile app source helpers, data, constants, stores
+├── server/
+│   ├── index.js          # Fastify backend entry point
+│   ├── src/
+│   │   ├── ai/           # DigiBuddy chat and transcription routes
+│   │   ├── auth/         # PIN auth and bearer token helpers
+│   │   ├── badges/       # Badge endpoints
+│   │   ├── db/           # Drizzle client, schema, migration SQL, seed script
+│   │   ├── friends/      # Friend request endpoints
+│   │   ├── leaderboard/  # Leaderboard endpoints
+│   │   ├── modules/      # Learning module and lesson endpoints
+│   │   ├── progress/     # Progress endpoints
+│   │   ├── quiz/         # Quiz endpoints
+│   │   └── users/        # Profile endpoints
+│   └── package.json
+└── package.json          # Expo app package
 ```
 
-### 2. Set Up the Backend
+## Prerequisites
 
-```bash
-# Navigate to backend folder
-cd chatbot-backend
+- Node.js 20 or newer
+- npm
+- PostgreSQL running locally
+- Gemini API key
+- Expo Go app or an iOS/Android simulator
 
-# Install dependencies
-npm install
+## Environment Variables
 
-# Create .env file
-touch .env
-```
-
-**Configure `.env` file:**
+Create `server/.env`:
 
 ```env
-GEMINI_API_KEY=your_gemini_api_key_here
-PORT=3000
+GEMINI_API_KEY=your-gemini-api-key
+PORT=4000
+NODE_ENV=development
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/digisahabat
+BETTER_AUTH_SECRET=replace-this-with-random-secret
+BETTER_AUTH_URL=http://localhost:4000
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen2.5:3b
 ```
 
-### 3. Set Up the Frontend
+Notes:
+- This project currently keeps using Gemini for `/chat`, `/transcribe`, `/ai/chat`, and `/ai/voice-transcribe`.
+- Ollama variables are included because they are part of the original PRD, but Ollama is not required for this implementation.
+- Replace `BETTER_AUTH_SECRET` with any long random string for local use.
+
+If the mobile app needs an API URL env file, use:
+
+```env
+EXPO_PUBLIC_API_URL=http://localhost:4000
+EXPO_PUBLIC_DEMO_MODE=true
+```
+
+For Android emulator:
+
+```env
+EXPO_PUBLIC_API_URL=http://10.0.2.2:4000
+```
+
+For a physical phone, replace `localhost` with your computer's LAN IP address.
+
+## Install
+
+Install mobile dependencies from the project root:
 
 ```bash
-# Navigate to frontend folder (from project root)
-cd CHATBOT
-
-# Install dependencies
 npm install
 ```
 
-**Configure API URL in `src/services/api.ts`:**
-
-```typescript
-// For physical device, use your computer's IP address
-const API_BASE_URL = "http://YOUR_COMPUTER_IP:3000/api";
-
-// Examples:
-// iOS Simulator: 'http://localhost:3000/api'
-// Android Emulator: 'http://10.0.2.2:3000/api'
-// Physical Device: 'http://192.168.1.XXX:3000/api'
-```
-
-**To find your computer's IP:**
-
-- **Mac**: `ipconfig getifaddr en0`
-- **Windows**: `ipconfig` (look for IPv4 Address)
-- **Linux**: `hostname -I`
-
-## Running the Application ▶️
-
-### Start the Backend Server
+Install backend dependencies:
 
 ```bash
-cd chatbot-backend
+cd server
+npm install
+```
+
+## Database Setup
+
+Create the local database:
+
+```bash
+createdb digisahabat
+```
+
+Push the Drizzle schema:
+
+```bash
+cd server
+npm run db:push
+```
+
+Seed demo data:
+
+```bash
+npm run seed
+```
+
+Demo login:
+
+```text
+Username: auntylela
+PIN:      123456
+```
+
+Seeded demo friends:
+
+```text
+pakdin
+siti01
+uncleman
+```
+
+## Run Locally
+
+Start the backend:
+
+```bash
+cd server
 npm run dev
 ```
 
-You should see: `Server running on http://localhost:3000`
+The API runs on:
 
-### Start the React Native App
+```text
+http://localhost:4000
+```
+
+Health check:
 
 ```bash
-cd CHATBOT
-npx expo start
+curl http://localhost:4000/health
 ```
 
-### Test on Your Device
+Start the Expo app from the project root:
 
-1. Open **Expo Go** app on your phone
-2. Scan the QR code shown in your terminal
-3. Wait for the app to load
-4. Start chatting!
-
-**Important**: Make sure your phone and computer are on the same Wi-Fi network.
-
-## Project Structure 📁
-
-```
-chatbot-project/
-├── chatbot-backend/          # Backend API server
-│   ├── src/
-│   │   ├── index.js         # Entry point
-│   │   ├── routes/
-│   │   │   ├── chat.js      # Chat endpoint
-│   │   │   └── transcribe.js # Voice transcription
-│   │   ├── services/
-│   │   │   └── gemini.js    # Gemini API integration
-│   │   └── middleware/
-│   │       └── upload.js    # File upload handler
-│   ├── uploads/             # Temporary audio files
-│   ├── .env                 # API keys (DO NOT COMMIT)
-│   └── package.json
-│
-└── CHATBOT/                  # React Native app
-    ├── app/
-    │   ├── _layout.tsx      # Root layout
-    │   └── index.tsx        # Main chat screen
-    ├── src/
-    │   ├── components/
-    │   │   ├── ChatBubble.tsx
-    │   │   ├── ChatInput.tsx
-    │   │   └── VoiceButton.tsx
-    │   ├── hooks/
-    │   │   └── useAudioRecorder.ts
-    │   ├── services/
-    │   │   └── api.ts       # API calls
-    │   └── types/
-    │       └── chat.ts      # TypeScript types
-    └── package.json
+```bash
+npm start
 ```
 
-## API Documentation 📚
+Then open the app in Expo Go, an iOS simulator, or an Android emulator.
 
-### POST /api/chat
+## Important Backend Endpoints
 
-Send a message and receive AI response.
+### Auth
 
-**Request:**
-
-```json
-{
-  "messages": [
-    { "role": "user", "content": "Explain photosynthesis" },
-    { "role": "assistant", "content": "Photosynthesis is..." }
-  ]
-}
+```http
+POST /auth/signup-pin
+POST /auth/login-pin
+POST /auth/logout
+GET  /auth/me
+POST /auth/change-pin
 ```
 
-**Response:**
+### Users
 
-```json
-{
-  "success": true,
-  "reply": "Photosynthesis is the process by which..."
-}
+```http
+GET   /users/me
+PATCH /users/me
+PATCH /users/me/username
+PATCH /users/me/phone
 ```
 
-### POST /api/transcribe
+### Learning
 
-Convert audio to text.
-
-**Request:**
-
-- Content-Type: `multipart/form-data`
-- Field: `audio` (audio file)
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "transcript": "What is photosynthesis?"
-}
+```http
+GET  /modules
+GET  /modules/:moduleId
+GET  /modules/:moduleId/lessons
+GET  /lessons/:lessonId
+GET  /modules/:moduleId/quiz
+POST /quiz/:quizId/submit
 ```
 
-### GET /health
+### Progress, Badges, Friends, Leaderboard
 
-Check server status.
-
-**Response:**
-
-```json
-{
-  "status": "ok"
-}
+```http
+GET  /progress/me
+POST /progress/lesson-complete
+POST /progress/module-complete
+GET  /badges
+GET  /badges/me
+GET  /friends
+POST /friends/request
+POST /friends/accept
+POST /friends/remove
+GET  /leaderboard/weekly
+GET  /leaderboard/friends
 ```
 
-## Usage Guide 📖
+### AI
 
-### Text Chat
+```http
+POST /ai/chat
+POST /ai/voice-transcribe
+POST /chat
+POST /transcribe
+GET  /health
+```
 
-1. Type your question in the text input field
-2. Press the send button (📤)
-3. Wait for AI response
-4. Continue the conversation
+The `/chat`, `/transcribe`, and `/health` routes are kept for compatibility with the earlier backend.
 
-### Voice Input
+## Example API Calls
 
-1. Press and hold the microphone button (🎤)
-2. Speak your question
-3. Release the button to send
-4. Audio is transcribed and sent automatically
+Login:
 
-### Listen to Messages
+```bash
+curl -X POST http://localhost:4000/auth/login-pin \
+  -H "Content-Type: application/json" \
+  -d '{"identifier":"auntylela","pin":"123456"}'
+```
 
-1. Long-press any message bubble
-2. The text will be read aloud
-3. Useful for pronunciation or hands-free learning
+Ask DigiBuddy:
 
-## Troubleshooting 🔧
+```bash
+curl -X POST http://localhost:4000/ai/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"What is a scam message?"}'
+```
 
-### Backend won't start
+Get modules:
 
-- Check if port 3000 is already in use
-- Verify `.env` file exists with valid API key
-- Run `npm install` again
+```bash
+curl http://localhost:4000/modules
+```
 
-### App can't connect to backend
+## Local Development Notes
 
-- Ensure backend is running (`npm run dev`)
-- Check API_BASE_URL matches your computer's IP
-- Verify both devices are on same Wi-Fi network
-- Try accessing `http://YOUR_IP:3000/health` in phone browser
+- Protected endpoints require an `Authorization: Bearer <token>` header from `/auth/login-pin`.
+- PINs are never stored directly; they are hashed with Argon2.
+- The seed script expects PostgreSQL to be running and reachable from `DATABASE_URL`.
+- If `npm run seed` fails with `ECONNREFUSED`, start PostgreSQL or check your database URL.
+- If the mobile app cannot reach the backend on a physical phone, use your laptop's local network IP instead of `localhost`.
 
-### "API key not valid" error
+## Showcase Flow
 
-- Verify Gemini API is enabled in Google Cloud Console
-- Regenerate API key at [aistudio.google.com](https://aistudio.google.com)
-- Check for extra spaces in `.env` file
-- Make sure no quotes around the API key
+1. Log in as `auntylela` with PIN `123456`.
+2. Open the Learning Tech Devices module.
+3. Read the lessons.
+4. Complete the quiz.
+5. Earn the Tech Explorer badge.
+6. Check leaderboard progress.
+7. Add or view friends.
+8. Ask DigiBuddy a digital safety question.
 
-### Audio recording not working
+## Scripts
 
-- Grant microphone permissions when prompted
-- Check `app.json` has `expo-av` plugin configured
-- Try running `npx expo prebuild --clean`
+Root app:
 
-### Rate limit errors
+```bash
+npm start      # Start Expo
+npm run ios    # Run iOS build
+npm run android
+npm test
+```
 
-- Wait a few minutes before trying again
-- Free tier has usage limits (60 requests/minute)
-- Consider using a different Gemini model
+Backend:
 
-## Development Tips 💡
+```bash
+npm run dev        # Start backend
+npm run start      # Start backend
+npm run db:push    # Push Drizzle schema to PostgreSQL
+npm run seed       # Insert demo data
+```
 
-- Use `npm run dev` (with nodemon) for auto-restart on backend changes
-- Expo provides hot-reload for frontend - changes appear instantly
-- Check backend terminal logs for API errors
-- Use React Native Debugger for frontend debugging
-- Test on real device for better performance
+## Status
 
-## Future Improvements 🚀
-
-- [ ] Add conversation history persistence
-- [ ] Support multiple languages
-- [ ] Add user authentication
-- [ ] Implement topic categories
-- [ ] Add code syntax highlighting for programming questions
-- [ ] Support image uploads for visual learning
-- [ ] Add quiz/assessment features
-- [ ] Deploy backend to cloud (Heroku, Railway, etc.)
-
-## Contributing 🤝
-
-Feel free to fork this project and submit pull requests for improvements!
-
-## License 📄
-
-This project is created for educational purposes.
-
-## Support 💬
-
-If you encounter issues:
-
-1. Check the troubleshooting section above
-2. Review backend terminal logs for errors
-3. Verify all installation steps were completed
-4. Ensure API keys are valid and properly configured
-
----
-
-Built with ❤️ using React Native and Google Gemini AI
+This is a showcase prototype, not a production system. It is built to demonstrate the complete DigiSahabat learning experience locally with realistic backend data and AI-assisted digital literacy support.

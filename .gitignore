@@ -1,44 +1,43 @@
-# Dependencies
-**/node_modules/
-**/.expo/
-**/.expo-shared/
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# Environment variables (IMPORTANT!)
-**/.env
-**/.env.local
-**/.env.*.local
-
-# Backend uploads
-chatbot-backend/uploads/
-**/*.m4a
-**/*.wav
-**/*.mp3
-**/*.mp4
-
-# Build files
-**/dist/
-**/build/
-**/*.log
-
-# OS files
-.DS_Store
-**/.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-**/*.swp
-**/*.swo
+# dependencies
+node_modules/
 
 # Expo
 .expo/
-.expo-shared/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
 
 # Metro
 .metro-health-check*
 
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+app-example
+
+# generated native folders
+/ios
+/android
