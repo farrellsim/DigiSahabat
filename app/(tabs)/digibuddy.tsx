@@ -19,6 +19,19 @@ import { API_URL as API_BASE } from "../../src/config";
 
 const API_URL = `${API_BASE}/ai/chat`;
 
+/** Strip markdown so replies read as plain, friendly text (no **, *, #, `). */
+function cleanReply(s: string): string {
+  return s
+    .replace(/\*\*(.*?)\*\*/g, "$1") // bold
+    .replace(/(^|\s)\*(?=\S)(.*?)\*/g, "$1$2") // italics
+    .replace(/`([^`]*)`/g, "$1") // inline code
+    .replace(/_{1,2}(.*?)_{1,2}/g, "$1") // underscores
+    .replace(/^#{1,6}\s+/gm, "") // headings
+    .replace(/^\s*[-*•]\s+/gm, "• ") // bullets -> clean bullet
+    .replace(/\n{3,}/g, "\n\n") // collapse extra blank lines
+    .trim();
+}
+
 const SUGGESTED_CHIPS = [
   "What is a scam message?",
   "How do I use a printer?",
@@ -150,7 +163,7 @@ export default function DigiBuddy() {
       const data = await res.json();
       const reply =
         typeof data?.reply === "string" && data.reply.trim()
-          ? data.reply
+          ? cleanReply(data.reply)
           : "Sorry, I could not reply. Please try again.";
       setMessages((prev) => [
         ...prev,
