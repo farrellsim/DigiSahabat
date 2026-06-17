@@ -13,9 +13,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { Bot, Mic, Send, Volume2, Sparkles } from "lucide-react-native";
+import { Mic, Send, Volume2, Sparkles } from "lucide-react-native";
 import { theme, shadow } from "../../src/constants/theme";
 import { API_URL as API_BASE } from "../../src/config";
+import { DigiBuddyAvatar } from "../../src/components/ui/DigiBuddyAvatar";
 
 const API_URL = `${API_BASE}/ai/chat`;
 
@@ -62,12 +63,7 @@ function Bubble({ item, onSpeak }: { item: Msg; onSpeak: (t: string) => void }) 
   return (
     <View className={`flex-row px-4 mb-3 ${isAssistant ? "" : "justify-end"}`}>
       {isAssistant && (
-        <View
-          className="w-8 h-8 rounded-full items-center justify-center mr-2 mt-1"
-          style={{ backgroundColor: theme.color.mint }}
-        >
-          <Bot size={16} color={theme.color.primary} />
-        </View>
+        <DigiBuddyAvatar size={34} style={{ marginRight: 8, marginTop: 2 }} />
       )}
       <View
         className="max-w-[76%] rounded-2xl px-4 py-3"
@@ -84,7 +80,7 @@ function Bubble({ item, onSpeak }: { item: Msg; onSpeak: (t: string) => void }) 
           <TypingDots />
         ) : (
           <Text
-            className="text-[15px] leading-[22px]"
+            className="text-[16px] leading-[24px]"
             style={{ color: isAssistant ? theme.color.foreground : "#fff" }}
           >
             {item.content}
@@ -195,32 +191,29 @@ export default function DigiBuddy() {
           <View className="flex-1">
             {/* Header */}
             <View className="px-5 py-3 border-b border-border bg-card flex-row items-center">
-              <View
-                className="w-11 h-11 rounded-full items-center justify-center mr-3"
-                style={{ backgroundColor: theme.color.mint }}
-              >
-                <Bot size={22} color={theme.color.primary} />
-              </View>
+              <DigiBuddyAvatar size={48} style={{ marginRight: 12 }} />
               <View className="flex-1">
-                <Text className="text-[18px] font-bold text-foreground">
+                <Text className="text-[20px] font-extrabold text-foreground">
                   DigiBuddy
                 </Text>
                 <View className="flex-row items-center mt-0.5">
                   <View
-                    className="w-1.5 h-1.5 rounded-full mr-1.5"
+                    className="w-2 h-2 rounded-full mr-1.5"
                     style={{ backgroundColor: theme.color.success }}
                   />
-                  <Text className="text-[12px] text-muted-foreground">
+                  <Text className="text-[13px] text-muted-foreground">
                     AI Learning Assistant
                   </Text>
                 </View>
               </View>
               <TouchableOpacity
                 onPress={() => router.push("/ai/talk" as any)}
-                className="w-11 h-11 rounded-full items-center justify-center"
+                className="w-12 h-12 rounded-full items-center justify-center"
                 style={{ backgroundColor: theme.color.mint }}
+                accessibilityRole="button"
+                accessibilityLabel="Voice mode"
               >
-                <Mic size={19} color={theme.color.primary} />
+                <Mic size={22} color={theme.color.primary} />
               </TouchableOpacity>
             </View>
 
@@ -239,8 +232,8 @@ export default function DigiBuddy() {
             {messages.length === 1 && !isTyping && (
               <View className="px-4 pb-3">
                 <View className="flex-row items-center mb-2 ml-1">
-                  <Sparkles size={13} color={theme.color.muted} />
-                  <Text className="text-[11px] font-bold text-muted-foreground ml-1.5 tracking-wide">
+                  <Sparkles size={15} color={theme.color.muted} />
+                  <Text className="text-[12px] font-bold text-muted-foreground ml-1.5 tracking-wide">
                     TRY ASKING
                   </Text>
                 </View>
@@ -249,9 +242,10 @@ export default function DigiBuddy() {
                     <TouchableOpacity
                       key={chip}
                       onPress={() => send(chip)}
-                      className="rounded-full border border-border px-3.5 py-2 bg-card"
+                      accessibilityRole="button"
+                      className="rounded-full border border-border px-4 py-2.5 bg-card"
                     >
-                      <Text className="text-[12px] text-foreground">{chip}</Text>
+                      <Text className="text-[14px] text-foreground">{chip}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -270,7 +264,7 @@ export default function DigiBuddy() {
                     onChangeText={setInput}
                     placeholder="Type your question here..."
                     placeholderTextColor={theme.color.muted}
-                    className="text-[15px] text-foreground"
+                    className="text-[16px] text-foreground"
                     multiline
                     onFocus={scrollToBottom}
                   />
@@ -278,7 +272,9 @@ export default function DigiBuddy() {
                 <TouchableOpacity
                   onPress={() => send()}
                   disabled={isTyping || !input.trim()}
-                  className="w-12 h-12 rounded-2xl items-center justify-center"
+                  accessibilityRole="button"
+                  accessibilityLabel="Send message"
+                  className="w-14 h-14 rounded-2xl items-center justify-center"
                   style={{
                     backgroundColor:
                       isTyping || !input.trim()
@@ -286,7 +282,7 @@ export default function DigiBuddy() {
                         : theme.color.primary,
                   }}
                 >
-                  <Send size={18} color="#fff" />
+                  <Send size={22} color="#fff" />
                 </TouchableOpacity>
               </View>
             </View>

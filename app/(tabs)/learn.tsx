@@ -28,10 +28,10 @@ export default function Learn() {
       >
         {/* Header */}
         <View className="px-5 pt-3 pb-4">
-          <Text className="text-[28px] font-bold text-foreground">
+          <Text className="text-[30px] font-extrabold text-foreground">
             Learning Path
           </Text>
-          <Text className="text-[14px] text-muted-foreground mt-1">
+          <Text className="text-[16px] text-muted-foreground mt-1">
             Start your digital skills journey
           </Text>
         </View>
@@ -61,7 +61,7 @@ export default function Learn() {
                 >
                   <View className="flex-row items-start">
                     <View
-                      className="w-14 h-14 rounded-2xl items-center justify-center mr-4"
+                      className="w-16 h-16 rounded-2xl items-center justify-center mr-4"
                       style={{
                         backgroundColor: isLocked
                           ? theme.color.mutedSurface
@@ -71,9 +71,9 @@ export default function Learn() {
                       }}
                     >
                       {isLocked ? (
-                        <Lock size={24} color={theme.color.muted} />
+                        <Lock size={26} color={theme.color.muted} />
                       ) : (
-                        <Text className="text-[28px]">{mod.imageEmoji}</Text>
+                        <Text className="text-[32px]">{mod.imageEmoji}</Text>
                       )}
                     </View>
                     <View className="flex-1">
@@ -89,10 +89,10 @@ export default function Learn() {
                           tone={isDone ? "success" : isLocked ? "muted" : "primary"}
                         />
                       </View>
-                      <Text className="text-[17px] font-bold text-foreground">
+                      <Text className="text-[18px] font-bold text-foreground">
                         {mod.title}
                       </Text>
-                      <Text className="text-[13px] text-muted-foreground mt-1 leading-5">
+                      <Text className="text-[15px] text-muted-foreground mt-1 leading-[22px]">
                         {mod.description}
                       </Text>
                     </View>
@@ -101,20 +101,20 @@ export default function Learn() {
                   {/* Meta */}
                   <View className="flex-row items-center mt-4 gap-4">
                     <View className="flex-row items-center">
-                      <Clock size={14} color={theme.color.muted} />
-                      <Text className="text-[12px] text-muted-foreground ml-1.5">
+                      <Clock size={16} color={theme.color.muted} />
+                      <Text className="text-[14px] text-muted-foreground ml-1.5">
                         {mod.estimatedMinutes} min
                       </Text>
                     </View>
                     <View className="flex-row items-center">
-                      <Layers size={14} color={theme.color.muted} />
-                      <Text className="text-[12px] text-muted-foreground ml-1.5">
+                      <Layers size={16} color={theme.color.muted} />
+                      <Text className="text-[14px] text-muted-foreground ml-1.5">
                         {mod.lessons.length} lessons
                       </Text>
                     </View>
                     <View className="flex-row items-center">
-                      <Star size={14} color={theme.color.muted} />
-                      <Text className="text-[12px] text-muted-foreground ml-1.5">
+                      <Star size={16} color={theme.color.muted} />
+                      <Text className="text-[14px] text-muted-foreground ml-1.5">
                         +{mod.xpReward} XP
                       </Text>
                     </View>
@@ -131,19 +131,22 @@ export default function Learn() {
                       <TouchableOpacity
                         activeOpacity={0.9}
                         onPress={() => router.push(`/lesson/${mod.id}` as any)}
-                        className="flex-1 rounded-2xl py-3.5 items-center"
-                        style={{ backgroundColor: theme.color.primary }}
+                        accessibilityRole="button"
+                        className="flex-1 rounded-2xl items-center justify-center"
+                        style={{ backgroundColor: theme.color.primary, minHeight: 54 }}
                       >
-                        <Text className="text-white text-[15px] font-bold">
+                        <Text className="text-white text-[17px] font-bold">
                           {isDone ? "Review Module" : "Start Module"}
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         activeOpacity={0.9}
                         onPress={() => router.push(`/download/${mod.id}` as any)}
-                        className="w-12 h-12 rounded-2xl border border-border bg-card items-center justify-center"
+                        accessibilityRole="button"
+                        accessibilityLabel="Download module"
+                        className="w-[54px] h-[54px] rounded-2xl border border-border bg-card items-center justify-center"
                       >
-                        <CloudDownload size={20} color={theme.color.muted} />
+                        <CloudDownload size={22} color={theme.color.muted} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -164,20 +167,20 @@ export default function Learn() {
               style={{ backgroundColor: theme.color.mint }}
             >
               <View
-                className="w-11 h-11 rounded-2xl items-center justify-center mr-3"
+                className="w-12 h-12 rounded-2xl items-center justify-center mr-3"
                 style={{ backgroundColor: theme.color.successSurface }}
               >
-                <Share2 size={20} color={theme.color.primary} />
+                <Share2 size={22} color={theme.color.primary} />
               </View>
               <View className="flex-1">
-                <Text className="text-[14px] font-bold text-foreground">
+                <Text className="text-[16px] font-bold text-foreground">
                   Share Modules Nearby
                 </Text>
-                <Text className="text-[12px] text-muted-foreground mt-0.5">
+                <Text className="text-[14px] text-muted-foreground mt-0.5">
                   Send to another phone — no internet needed
                 </Text>
               </View>
-              <ChevronRight size={18} color={theme.color.primary} />
+              <ChevronRight size={22} color={theme.color.primary} />
             </View>
           </TouchableOpacity>
         </View>

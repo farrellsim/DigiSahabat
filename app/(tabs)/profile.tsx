@@ -15,6 +15,7 @@ import { clearSession } from "../../lib/protoSession";
 import { Card } from "../../src/components/ui/Card";
 import { ProgressBar } from "../../src/components/ui/ProgressBar";
 import { theme } from "../../src/constants/theme";
+import { levelProgress } from "../../src/utils/level";
 
 const BADGE_ICONS: Record<string, string> = {
   tech_explorer: "📱",
@@ -28,18 +29,14 @@ export default function Profile() {
     displayName,
     username,
     xp,
-    level,
     streak,
     badges,
     completedModules,
     friends,
   } = useAppStore();
 
-  const xpForCurrentLevel = (level - 1) * 100;
-  const xpForNextLevel = level * 100;
-  const xpProgress = xp - xpForCurrentLevel;
-  const xpNeeded = xpForNextLevel - xpForCurrentLevel;
-  const progressPct = Math.min((xpProgress / xpNeeded) * 100, 100);
+  const { level, xpInLevel, xpNeeded, pct: progressPct, nextLevel } =
+    levelProgress(xp);
   const acceptedFriends = friends.filter((f) => f.status === "accepted");
 
   const logout = useAppStore((s) => s.logout);
@@ -65,12 +62,14 @@ export default function Profile() {
       >
         {/* Header */}
         <View className="px-5 pt-3 pb-4 flex-row items-center justify-between">
-          <Text className="text-[28px] font-bold text-foreground">My Profile</Text>
+          <Text className="text-[30px] font-extrabold text-foreground">My Profile</Text>
           <TouchableOpacity
             onPress={() => router.push("/(tabs)/settings" as any)}
-            className="w-10 h-10 rounded-2xl bg-card border border-border items-center justify-center"
+            accessibilityRole="button"
+            accessibilityLabel="Settings"
+            className="w-11 h-11 rounded-2xl bg-card border border-border items-center justify-center"
           >
-            <Settings size={20} color={theme.color.muted} />
+            <Settings size={22} color={theme.color.muted} />
           </TouchableOpacity>
         </View>
 
@@ -89,20 +88,20 @@ export default function Profile() {
               </View>
 
               <View className="flex-row items-start justify-between mt-2">
-                <View>
-                  <Text className="text-[20px] font-bold text-foreground">
+                <View className="flex-1 pr-3">
+                  <Text className="text-[22px] font-extrabold text-foreground">
                     {displayName}
                   </Text>
-                  <Text className="text-[13px] text-muted-foreground">
+                  <Text className="text-[15px] text-muted-foreground">
                     @{username}
                   </Text>
                 </View>
                 <View
-                  className="px-3 py-1.5 rounded-full"
+                  className="px-3.5 py-2 rounded-full"
                   style={{ backgroundColor: theme.color.mint }}
                 >
                   <Text
-                    className="text-[12px] font-bold"
+                    className="text-[14px] font-bold"
                     style={{ color: theme.color.primary }}
                   >
                     Level {level}
@@ -113,13 +112,13 @@ export default function Profile() {
               <View className="mt-4">
                 <View className="flex-row justify-between mb-1.5">
                   <View className="flex-row items-center">
-                    <Star size={13} color={theme.color.warning} fill={theme.color.warning} />
-                    <Text className="text-[12px] font-semibold text-muted-foreground ml-1">
+                    <Star size={15} color={theme.color.warning} fill={theme.color.warning} />
+                    <Text className="text-[14px] font-semibold text-muted-foreground ml-1">
                       {xp} XP
                     </Text>
                   </View>
-                  <Text className="text-[11px] text-muted-foreground">
-                    {xpProgress}/{xpNeeded} to Level {level + 1}
+                  <Text className="text-[14px] text-muted-foreground">
+                    {xpInLevel}/{xpNeeded} to Level {nextLevel}
                   </Text>
                 </View>
                 <ProgressBar value={progressPct} />
@@ -131,17 +130,17 @@ export default function Profile() {
         {/* Stats */}
         <View className="flex-row mx-4 mt-3 gap-3">
           {stats.map((s) => (
-            <Card key={s.label} elevation="sm" className="flex-1 items-center py-3">
+            <Card key={s.label} elevation="sm" className="flex-1 items-center py-3.5">
               <View
-                className="w-8 h-8 rounded-xl items-center justify-center mb-1"
+                className="w-10 h-10 rounded-xl items-center justify-center mb-1.5"
                 style={{ backgroundColor: s.bg }}
               >
-                <s.Icon size={16} color={s.color} />
+                <s.Icon size={20} color={s.color} />
               </View>
-              <Text className="text-[18px] font-bold text-foreground">
+              <Text className="text-[22px] font-extrabold text-foreground">
                 {s.value}
               </Text>
-              <Text className="text-[10px] text-muted-foreground mt-0.5">
+              <Text className="text-[12px] text-muted-foreground mt-0.5">
                 {s.label}
               </Text>
             </Card>
@@ -149,7 +148,7 @@ export default function Profile() {
         </View>
 
         {/* Badges */}
-        <Text className="text-[12px] font-bold text-muted-foreground mt-6 mb-2 ml-5 tracking-wide">
+        <Text className="text-[13px] font-bold text-muted-foreground mt-6 mb-2 ml-5 tracking-wide">
           MY BADGES
         </Text>
         <View className="mx-4">
@@ -172,17 +171,17 @@ export default function Profile() {
                     className="items-center rounded-2xl px-4 py-4"
                     style={{ backgroundColor: theme.color.mint, minWidth: "45%", flex: 1 }}
                   >
-                    <Text className="text-[32px]">{BADGE_ICONS[b.code] ?? "🏆"}</Text>
-                    <Text className="text-[13px] font-bold text-foreground mt-2 text-center">
+                    <Text className="text-[36px]">{BADGE_ICONS[b.code] ?? "🏆"}</Text>
+                    <Text className="text-[15px] font-bold text-foreground mt-2 text-center">
                       {b.name}
                     </Text>
-                    <Text className="text-[11px] text-muted-foreground mt-0.5 text-center">
+                    <Text className="text-[13px] text-muted-foreground mt-1 text-center leading-[18px]">
                       {b.description}
                     </Text>
                     <View className="flex-row items-center mt-2">
-                      <Star size={11} color={theme.color.warning} fill={theme.color.warning} />
+                      <Star size={13} color={theme.color.warning} fill={theme.color.warning} />
                       <Text
-                        className="text-[11px] font-bold ml-1"
+                        className="text-[13px] font-bold ml-1"
                         style={{ color: theme.color.primary }}
                       >
                         +{b.xpReward} XP
@@ -203,22 +202,22 @@ export default function Profile() {
           >
             <Card elevation="sm" className="px-5 py-4 flex-row items-center">
               <View
-                className="w-10 h-10 rounded-xl items-center justify-center mr-3"
+                className="w-12 h-12 rounded-xl items-center justify-center mr-3"
                 style={{ backgroundColor: theme.color.cream }}
               >
-                <Trophy size={20} color={theme.color.warningDark} />
+                <Trophy size={22} color={theme.color.warningDark} />
               </View>
-              <Text className="text-[15px] font-semibold text-foreground flex-1">
+              <Text className="text-[17px] font-bold text-foreground flex-1">
                 View Leaderboard
               </Text>
-              <ChevronRight size={18} color={theme.color.muted} />
+              <ChevronRight size={22} color={theme.color.muted} />
             </Card>
           </TouchableOpacity>
         </View>
 
         {/* Sign out */}
-        <TouchableOpacity onPress={signOut} className="items-center py-5 mt-2">
-          <Text className="text-[14px] font-semibold" style={{ color: theme.color.destructive }}>
+        <TouchableOpacity onPress={signOut} accessibilityRole="button" className="items-center py-5 mt-2">
+          <Text className="text-[16px] font-bold" style={{ color: theme.color.destructive }}>
             Sign Out
           </Text>
         </TouchableOpacity>

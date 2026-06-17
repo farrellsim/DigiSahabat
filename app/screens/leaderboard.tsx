@@ -51,11 +51,13 @@ export default function Leaderboard() {
       <View className="flex-row items-center px-5 pt-2 pb-3 bg-card border-b border-border">
         <TouchableOpacity
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full items-center justify-center mr-3 bg-muted"
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          className="w-11 h-11 rounded-full items-center justify-center mr-3 bg-muted"
         >
-          <ChevronLeft size={20} color={theme.color.foreground} />
+          <ChevronLeft size={24} color={theme.color.foreground} />
         </TouchableOpacity>
-        <Text className="text-[20px] font-bold text-foreground">Leaderboard</Text>
+        <Text className="text-[22px] font-extrabold text-foreground">Leaderboard</Text>
       </View>
 
       <ScrollView
@@ -67,22 +69,22 @@ export default function Leaderboard() {
           className="px-6 pt-6 pb-8"
           style={{ backgroundColor: theme.color.primary }}
         >
-          <Text className="text-[12px] font-bold text-center mb-5 text-white/60 tracking-wide">
+          <Text className="text-[13px] font-bold text-center mb-5 text-white/75 tracking-wide">
             THIS WEEK&apos;S TOP LEARNERS
           </Text>
           <View className="flex-row items-end justify-center gap-3">
             {podium.map((entry, i) => (
               <View key={entry.username} className="items-center flex-1">
-                <Text className="text-[26px] mb-1">{rankEmoji(podiumRank[i])}</Text>
+                <Text className="text-[30px] mb-1">{rankEmoji(podiumRank[i])}</Text>
                 <Text
-                  className="text-white text-[12px] font-bold text-center"
+                  className="text-white text-[14px] font-bold text-center"
                   numberOfLines={1}
                 >
                   {entry.displayName}
                 </Text>
                 <View className="flex-row items-center mt-1 mb-2">
-                  <Star size={11} color={theme.color.warning} fill={theme.color.warning} />
-                  <Text className="text-[11px] font-semibold ml-1 text-white/85">
+                  <Star size={13} color={theme.color.warning} fill={theme.color.warning} />
+                  <Text className="text-[13px] font-semibold ml-1 text-white/90">
                     {entry.xp} XP
                   </Text>
                 </View>
@@ -111,7 +113,7 @@ export default function Leaderboard() {
         </View>
 
         {/* Full list */}
-        <Text className="text-[12px] font-bold text-muted-foreground mt-5 mb-2 ml-5 tracking-wide">
+        <Text className="text-[13px] font-bold text-muted-foreground mt-5 mb-2 ml-5 tracking-wide">
           FULL RANKING
         </Text>
         <View className="px-4">
@@ -124,41 +126,41 @@ export default function Leaderboard() {
                 borderColor: entry.isMe ? theme.color.primaryLight : theme.color.border,
               }}
             >
-              <Text className="text-[20px] w-10 text-center">
+              <Text className="text-[22px] w-10 text-center">
                 {rankEmoji(idx)}
               </Text>
               <View
-                className="w-9 h-9 rounded-full items-center justify-center mr-3"
+                className="w-11 h-11 rounded-full items-center justify-center mr-3"
                 style={{
                   backgroundColor: entry.isMe
                     ? theme.color.successSurface
                     : theme.color.mutedSurface,
                 }}
               >
-                <User size={16} color={entry.isMe ? theme.color.primary : theme.color.muted} />
+                <User size={20} color={entry.isMe ? theme.color.primary : theme.color.muted} />
               </View>
               <View className="flex-1">
                 <Text
-                  className="text-[15px] font-bold"
+                  className="text-[16px] font-bold"
                   style={{ color: entry.isMe ? theme.color.primary : theme.color.foreground }}
                 >
                   {entry.displayName}
                   {entry.isMe ? " (You)" : ""}
                 </Text>
                 <View className="flex-row items-center mt-0.5 gap-3">
-                  <Text className="text-[11px] text-muted-foreground">
+                  <Text className="text-[13px] text-muted-foreground">
                     @{entry.username}
                   </Text>
                   {entry.badges > 0 && (
-                    <Text className="text-[11px] text-muted-foreground">
+                    <Text className="text-[13px] text-muted-foreground">
                       🏆 {entry.badges}
                     </Text>
                   )}
                 </View>
               </View>
               <View className="flex-row items-center">
-                <Star size={14} color={theme.color.warning} fill={theme.color.warning} />
-                <Text className="text-[16px] font-bold text-foreground ml-1">
+                <Star size={16} color={theme.color.warning} fill={theme.color.warning} />
+                <Text className="text-[18px] font-extrabold text-foreground ml-1">
                   {entry.xp}
                 </Text>
               </View>
@@ -169,7 +171,7 @@ export default function Leaderboard() {
             className="mt-1 rounded-2xl px-5 py-4"
             style={{ backgroundColor: theme.color.mint }}
           >
-            <Text className="text-[12px] leading-5" style={{ color: "#374151" }}>
+            <Text className="text-[14px] leading-[21px]" style={{ color: "#374151" }}>
               Leaderboard resets every Monday. Keep learning to earn XP and climb
               the ranks!
             </Text>

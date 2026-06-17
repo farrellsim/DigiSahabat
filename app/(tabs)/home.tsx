@@ -19,10 +19,12 @@ import { DAILY_TIPS, MODULES } from "../../src/data/modules";
 import { Card } from "../../src/components/ui/Card";
 import { ProgressBar } from "../../src/components/ui/ProgressBar";
 import { theme, shadow } from "../../src/constants/theme";
+import { levelProgress } from "../../src/utils/level";
 
 export default function Home() {
-  const { displayName, xp, level, streak, completedModules, badges } =
+  const { displayName, xp, streak, completedModules, badges } =
     useAppStore();
+  const { level } = levelProgress(xp);
   const hydrate = useAppStore((s) => s.hydrate);
   const [tip, setTip] = useState(DAILY_TIPS[0]);
 
@@ -95,10 +97,10 @@ export default function Home() {
           className="mx-4 mt-4 rounded-3xl px-6 py-6"
           style={{ backgroundColor: theme.color.primary, ...shadow.md }}
         >
-          <Text className="text-[13px] font-medium text-white/70">
+          <Text className="text-[15px] font-medium text-white/80">
             {greeting()},
           </Text>
-          <Text className="text-[25px] font-bold text-white mt-0.5">
+          <Text className="text-[27px] font-extrabold text-white mt-0.5">
             {displayName} 👋
           </Text>
 
@@ -106,15 +108,15 @@ export default function Home() {
             {stats.map((s) => (
               <View
                 key={s.label}
-                className="flex-1 rounded-2xl px-3 py-3"
-                style={{ backgroundColor: "rgba(255,255,255,0.13)" }}
+                className="flex-1 rounded-2xl px-3 py-3.5"
+                style={{ backgroundColor: "rgba(255,255,255,0.16)" }}
               >
-                <Text className="text-[10px] font-semibold text-white/65">
+                <Text className="text-[12px] font-semibold text-white/80">
                   {s.label}
                 </Text>
                 <View className="flex-row items-center mt-1.5">
-                  <s.Icon size={15} color={s.color} fill={s.color} />
-                  <Text className="text-[19px] font-bold text-white ml-1.5">
+                  <s.Icon size={18} color={s.color} fill={s.color} />
+                  <Text className="text-[22px] font-extrabold text-white ml-1.5">
                     {s.value}
                   </Text>
                 </View>
@@ -124,7 +126,7 @@ export default function Home() {
         </View>
 
         {/* Continue learning */}
-        <Text className="text-[12px] font-bold text-muted-foreground mt-6 mb-2 ml-5 tracking-wide">
+        <Text className="text-[13px] font-bold text-muted-foreground mt-7 mb-2.5 ml-5 tracking-wide">
           CONTINUE LEARNING
         </Text>
         <View className="mx-4">
@@ -135,34 +137,34 @@ export default function Home() {
             <Card className="px-5 py-5">
               <View className="flex-row items-center">
                 <View
-                  className="w-14 h-14 rounded-2xl items-center justify-center mr-4"
+                  className="w-16 h-16 rounded-2xl items-center justify-center mr-4"
                   style={{ backgroundColor: theme.color.mint }}
                 >
-                  <Text className="text-[28px]">{activeModule.imageEmoji}</Text>
+                  <Text className="text-[32px]">{activeModule.imageEmoji}</Text>
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[16px] font-bold text-foreground">
+                  <Text className="text-[17px] font-bold text-foreground">
                     {activeModule.title}
                   </Text>
-                  <Text className="text-[12px] text-muted-foreground mt-0.5">
+                  <Text className="text-[14px] text-muted-foreground mt-1">
                     {activeModule.estimatedMinutes} min · {activeModule.difficulty}
                   </Text>
                 </View>
                 <View
-                  className="w-10 h-10 rounded-full items-center justify-center"
+                  className="w-12 h-12 rounded-full items-center justify-center"
                   style={{ backgroundColor: theme.color.primary }}
                 >
-                  <ArrowRight size={18} color="#fff" />
+                  <ArrowRight size={22} color="#fff" />
                 </View>
               </View>
 
               <View className="mt-4">
                 <View className="flex-row justify-between mb-1.5">
-                  <Text className="text-[12px] text-muted-foreground">
+                  <Text className="text-[13px] text-muted-foreground">
                     {completedCount} of {lessonCount} lessons done
                   </Text>
                   <Text
-                    className="text-[12px] font-bold"
+                    className="text-[13px] font-bold"
                     style={{ color: theme.color.primary }}
                   >
                     {progressPct}%
@@ -175,7 +177,7 @@ export default function Home() {
         </View>
 
         {/* Quick actions */}
-        <Text className="text-[12px] font-bold text-muted-foreground mt-6 mb-2 ml-5 tracking-wide">
+        <Text className="text-[13px] font-bold text-muted-foreground mt-7 mb-2.5 ml-5 tracking-wide">
           QUICK ACTIONS
         </Text>
         <View className="flex-row mx-4 gap-3">
@@ -188,15 +190,15 @@ export default function Home() {
             >
               <Card elevation="sm" className="px-4 py-4">
                 <View
-                  className="w-10 h-10 rounded-xl items-center justify-center mb-2.5"
+                  className="w-12 h-12 rounded-xl items-center justify-center mb-2.5"
                   style={{ backgroundColor: a.bg }}
                 >
-                  <a.Icon size={20} color={a.color} />
+                  <a.Icon size={24} color={a.color} />
                 </View>
-                <Text className="text-[14px] font-bold text-foreground">
+                <Text className="text-[15px] font-bold text-foreground">
                   {a.label}
                 </Text>
-                <Text className="text-[11px] text-muted-foreground mt-0.5">
+                <Text className="text-[12px] text-muted-foreground mt-0.5">
                   {a.sub}
                 </Text>
               </Card>
@@ -210,19 +212,19 @@ export default function Home() {
           style={{ backgroundColor: theme.color.cream }}
         >
           <View
-            className="w-9 h-9 rounded-xl items-center justify-center mr-3 mt-0.5"
+            className="w-10 h-10 rounded-xl items-center justify-center mr-3 mt-0.5"
             style={{ backgroundColor: theme.color.warningSurface }}
           >
-            <Lightbulb size={18} color={theme.color.warningDark} />
+            <Lightbulb size={20} color={theme.color.warningDark} />
           </View>
           <View className="flex-1">
             <Text
-              className="text-[11px] font-bold mb-1 tracking-wide"
+              className="text-[12px] font-bold mb-1 tracking-wide"
               style={{ color: theme.color.warningDark }}
             >
               DAILY TIP
             </Text>
-            <Text className="text-[14px] leading-5" style={{ color: "#92400E" }}>
+            <Text className="text-[15px] leading-[22px]" style={{ color: "#92400E" }}>
               {tip}
             </Text>
           </View>
@@ -236,20 +238,20 @@ export default function Home() {
           >
             <Card elevation="sm" className="px-5 py-4 flex-row items-center">
               <View
-                className="w-10 h-10 rounded-xl items-center justify-center mr-3"
+                className="w-12 h-12 rounded-xl items-center justify-center mr-3"
                 style={{ backgroundColor: theme.color.mint }}
               >
-                <Users size={20} color={theme.color.primary} />
+                <Users size={24} color={theme.color.primary} />
               </View>
               <View className="flex-1">
-                <Text className="text-[14px] font-bold text-foreground">
+                <Text className="text-[16px] font-bold text-foreground">
                   Friends & Leaderboard
                 </Text>
-                <Text className="text-[12px] text-muted-foreground mt-0.5">
+                <Text className="text-[14px] text-muted-foreground mt-0.5">
                   See how you rank this week
                 </Text>
               </View>
-              <ChevronRight size={18} color={theme.color.muted} />
+              <ChevronRight size={22} color={theme.color.muted} />
             </Card>
           </TouchableOpacity>
         </View>

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   SafeAreaView,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -11,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { setSession } from "../../lib/protoSession";
 import { useAppStore } from "../../src/store/app.store";
+import { Logo } from "../../src/components/ui/Logo";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -57,30 +59,38 @@ export default function Login() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="px-6 pt-10">
-        <View className="w-16 h-16 rounded-2xl bg-green-100 items-center justify-center mb-6">
-          <Text className="text-[22px]">📖</Text>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 28, paddingBottom: 40 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="items-center mb-6">
+          <View className="w-[92px] h-[92px] rounded-3xl bg-primary items-center justify-center shadow-sm">
+            <Logo size={62} />
+          </View>
         </View>
 
-        <Text className="text-[26px] font-semibold text-gray-900">Log In</Text>
-        <Text className="text-[13px] text-gray-500 mt-2 mb-6">
+        <Text className="text-[30px] font-extrabold text-gray-900 text-center">
+          Welcome back
+        </Text>
+        <Text className="text-[16px] text-gray-500 mt-2 mb-7 text-center leading-6">
           Continue your digital learning journey
         </Text>
 
-        <View className="flex-row gap-3 mb-6">
+        <View className="flex-row gap-3 mb-7">
           {["Interactive", "Safe", "Fast"].map((t) => (
             <View
               key={t}
-              className="flex-1 rounded-2xl bg-green-50 border border-green-100 p-3 items-center"
+              className="flex-1 rounded-2xl bg-green-50 border border-green-100 py-3.5 items-center"
             >
-              <Text className="text-[12px] text-gray-600">{t}</Text>
+              <Text className="text-[14px] font-semibold text-green-800">{t}</Text>
             </View>
           ))}
         </View>
 
-        <Text className="text-[13px] text-gray-500 mb-2">Unique Username</Text>
-        <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 mb-4">
-          <Ionicons name="person-outline" size={18} color="#6B7280" />
+        <Text className="text-[15px] font-semibold text-gray-700 mb-2">Username</Text>
+        <View className="flex-row items-center bg-white border-2 border-gray-200 rounded-2xl px-4 py-4 mb-4">
+          <Ionicons name="person-outline" size={22} color="#4B5563" />
           <TextInput
             value={username}
             onChangeText={(t) => {
@@ -90,13 +100,13 @@ export default function Login() {
             placeholder="Enter your username"
             placeholderTextColor="#9CA3AF"
             autoCapitalize="none"
-            className="ml-3 flex-1 text-[15px] text-gray-900"
+            className="ml-3 flex-1 text-[17px] text-gray-900"
           />
         </View>
 
-        <Text className="text-[13px] text-gray-500 mb-2">6-digit PIN</Text>
-        <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3">
-          <Ionicons name="lock-closed-outline" size={18} color="#6B7280" />
+        <Text className="text-[15px] font-semibold text-gray-700 mb-2">6-digit PIN</Text>
+        <View className="flex-row items-center bg-white border-2 border-gray-200 rounded-2xl px-4 py-4">
+          <Ionicons name="lock-closed-outline" size={22} color="#4B5563" />
           <TextInput
             value={pin}
             onChangeText={(t) => {
@@ -107,14 +117,14 @@ export default function Login() {
             placeholderTextColor="#9CA3AF"
             keyboardType="number-pad"
             secureTextEntry
-            className="ml-3 flex-1 text-[15px] text-gray-900"
+            className="ml-3 flex-1 text-[17px] text-gray-900"
           />
         </View>
 
         {error ? (
-          <Text className="text-[12px] text-red-500 mt-3">{error}</Text>
+          <Text className="text-[14px] font-medium text-red-600 mt-3">{error}</Text>
         ) : (
-          <Text className="text-[12px] text-gray-400 mt-3">
+          <Text className="text-[14px] text-gray-400 mt-3">
             Demo: auntylela / 123456
           </Text>
         )}
@@ -122,52 +132,60 @@ export default function Login() {
         <TouchableOpacity
           onPress={login}
           disabled={!canLogin || loading}
+          activeOpacity={0.85}
+          accessibilityRole="button"
           className={[
-            "mt-5 rounded-2xl py-4 items-center flex-row justify-center",
+            "mt-6 rounded-2xl items-center flex-row justify-center",
             canLogin && !loading ? "bg-green-600" : "bg-green-300",
           ].join(" ")}
+          style={{ minHeight: 58 }}
         >
           {loading ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text className="text-white text-[15px] font-semibold">Log In</Text>
+            <Text className="text-white text-[17px] font-bold">Log In</Text>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={() => router.push("/(auth)/forgot-pin")}
-          className="mt-4 items-center"
+          className="mt-4 items-center py-2"
+          accessibilityRole="button"
         >
-          <Text className="text-[13px] text-green-700 font-semibold">
+          <Text className="text-[15px] text-green-700 font-semibold">
             Forgot PIN? Use phone OTP
           </Text>
         </TouchableOpacity>
 
         <View className="flex-row items-center my-5">
-          <View className="flex-1 h-[1px] bg-gray-100" />
-          <Text className="mx-3 text-[12px] text-gray-400">OR</Text>
-          <View className="flex-1 h-[1px] bg-gray-100" />
+          <View className="flex-1 h-[1px] bg-gray-200" />
+          <Text className="mx-3 text-[13px] font-medium text-gray-400">OR</Text>
+          <View className="flex-1 h-[1px] bg-gray-200" />
         </View>
 
         <TouchableOpacity
           onPress={guest}
-          className="rounded-2xl border border-gray-200 py-4 items-center bg-white"
+          activeOpacity={0.85}
+          accessibilityRole="button"
+          className="rounded-2xl border-2 border-gray-200 items-center justify-center bg-white"
+          style={{ minHeight: 58 }}
         >
-          <Text className="text-[15px] font-semibold text-gray-900">
+          <Text className="text-[17px] font-bold text-gray-900">
             Continue as Guest
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={() => router.push("/(auth)/signup")}
-          className="mt-5 items-center"
+          className="mt-6 items-center py-2"
+          accessibilityRole="button"
         >
-          <Text className="text-[13px] text-gray-500">
+          <Text className="text-[15px] text-gray-500">
             Don’t have an account?{" "}
-            <Text className="text-green-700 font-semibold">Sign Up</Text>
+            <Text className="text-green-700 font-bold">Sign Up</Text>
           </Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
