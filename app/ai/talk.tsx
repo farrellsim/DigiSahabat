@@ -10,9 +10,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronLeft, Mic, MicOff, StopCircle } from "lucide-react-native";
 import { router } from "expo-router";
+import { API_URL as API_BASE } from "../../src/config";
+import { DigiBuddyAvatar } from "../../src/components/ui/DigiBuddyAvatar";
 
-const API_URL = "http://localhost:4000/chat";
-const TRANSCRIBE_URL = "http://localhost:4000/transcribe";
+const API_URL = `${API_BASE}/chat`;
+const TRANSCRIBE_URL = `${API_BASE}/transcribe`;
 
 const DEMO_QUESTION = "How do I know if a message is a scam?";
 
@@ -227,9 +229,9 @@ export default function AITalk() {
           {/* Mascot circle */}
           <View
             style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
+              width: 116,
+              height: 116,
+              borderRadius: 58,
               backgroundColor: "rgba(255,255,255,0.95)",
               alignItems: "center",
               justifyContent: "center",
@@ -239,7 +241,7 @@ export default function AITalk() {
               elevation: 6,
             }}
           >
-            <Text style={{ fontSize: 48 }}>🤖</Text>
+            <DigiBuddyAvatar size={84} />
           </View>
         </View>
 
